@@ -22,7 +22,7 @@ export default function JourneySearch() {
   return (
     <section
       id="book"
-      className="relative overflow-hidden rounded-3xl bg-[#073936] p-6 text-white shadow-[0_18px_45px_rgba(7,57,54,0.28)] sm:p-8"
+      className="relative overflow-visible rounded-3xl bg-[#073936] p-6 text-white shadow-[0_18px_45px_rgba(7,57,54,0.28)] sm:p-8"
     >
       <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full border border-secondary/30" />
       <div className="absolute bottom-6 right-8 hidden text-secondary/20 sm:block">
@@ -41,7 +41,7 @@ export default function JourneySearch() {
         </p>
       </div>
 
-      <div className="relative mt-8 rounded-2xl border border-white/15 bg-white p-4 text-[#111827] shadow-2xl sm:p-5">
+      <div className="relative z-20 mt-8 rounded-2xl border border-white/15 bg-white p-4 text-[#111827] shadow-2xl sm:p-5">
         <div className="grid gap-4 xl:grid-cols-[1fr_1fr_180px_180px]">
           <Dropdown
             label="From"
