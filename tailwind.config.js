@@ -12,8 +12,8 @@ export default {
           darker: '#085F58',
         },
         secondary: {
-          DEFAULT: '#F59E0B',
-          hover: '#D97706',
+          DEFAULT: '#D4AF37',
+          hover: '#B8941F',
           muted: '#FEF3C7',
         },
         soft: '#F9FAFB',
@@ -27,8 +27,11 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
+        'gold-gradient':
+          'linear-gradient(135deg, #FDE08B 0%, #D4AF37 50%, #997A15 100%)',
         'amber-gradient':
-          'linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #D97706 100%)',
+          'linear-gradient(135deg, #FDE08B 0%, #D4AF37 50%, #997A15 100%)',
+        'radial-gradient': 'radial-gradient(circle, var(--tw-gradient-stops))',
         'teal-radial':
           'radial-gradient(ellipse at center, #0D9488 0%, #0F766E 55%, #0A5C56 100%)',
       },
