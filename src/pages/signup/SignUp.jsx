@@ -1,5 +1,9 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
+import { Link, useNavigate } from 'react-router-dom'
 import TrachNexaLogo from '../../assets/TrachNexaLogo'
+import { buildApiUrl } from '../../config/api'
 import {
   ChevronDownIcon,
   EyeIcon,
@@ -52,6 +56,7 @@ function Field({
 }
 
 export default function SignUp() {
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     fullName: '',
     email: '',
@@ -62,6 +67,31 @@ export default function SignUp() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const signUpMutation = useMutation({
+    mutationFn: async (payload) => {
+      const response = await fetch(buildApiUrl('/api/sign-up'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      })
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(data?.message ?? 'Unable to create account')
+      }
+
+      return data
+    },
+    onSuccess: (data) => {
+      toast.success(data?.message ?? 'Account created successfully')
+      navigate('/login')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   const update = (key) => (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
@@ -70,6 +100,13 @@ export default function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    signUpMutation.mutate({
+      fullName: form.fullName,
+      email: form.email,
+      mobileNumber: form.mobile,
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+    })
   }
 
   return (
@@ -185,8 +222,12 @@ export default function SignUp() {
             </span>
           </label>
 
-          <button type="submit" className="tn-btn-accent mt-2">
-            Create Account
+          <button
+            type="submit"
+            className="tn-btn-accent mt-2 disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={signUpMutation.isPending}
+          >
+            {signUpMutation.isPending ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
       </div>
@@ -195,9 +236,9 @@ export default function SignUp() {
         <div className="h-px flex-1 bg-white/35" />
         <p className="whitespace-nowrap text-sm text-white/90">
           Already have an account?{' '}
-          <a href="#login" className="font-bold text-secondary hover:text-secondary-hover">
+          <Link to="/login" className="font-bold text-secondary hover:text-secondary-hover">
             Log In
-          </a>
+          </Link>
         </p>
         <div className="h-px flex-1 bg-white/35" />
       </div>

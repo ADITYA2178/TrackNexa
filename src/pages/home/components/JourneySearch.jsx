@@ -4,6 +4,7 @@ import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
 import Dropdown from '../../../components/ui/Dropdown'
 import TextInput from '../../../components/ui/TextInput'
+import { buildApiUrl } from '../../../config/api'
 import { LineIcon } from './HomeIcons'
 
 const stationOptions = [
@@ -18,6 +19,16 @@ export default function JourneySearch() {
   const [destination, setDestination] = useState('new-delhi')
   const [journeyDate, setJourneyDate] = useState(new Date())
   const [passengers, setPassengers] = useState('1 passenger')
+
+  const handleSearch = () => {
+    const searchUrl = buildApiUrl('/trains/search')
+    console.info('Search trains API:', searchUrl, {
+      origin,
+      destination,
+      journeyDate,
+      passengers,
+    })
+  }
 
   return (
     <section
@@ -71,7 +82,9 @@ export default function JourneySearch() {
           />
         </div>
 
-        <Button className="mt-4 w-full py-3.5 text-base">Search Trains</Button>
+        <Button className="mt-4 w-full py-3.5 text-base" onClick={handleSearch}>
+          Search Trains
+        </Button>
       </div>
     </section>
   )
