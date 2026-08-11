@@ -1,3 +1,182 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Track Nexa Design System */
+:root {
+  /* Brand colors */
+  --color-primary: #0d9488;
+  --color-primary-hover: #0f766e;
+  --color-primary-muted: #ccfbf1;
+  --color-primary-deep: #0a6b63;
+  --color-primary-darker: #085f58;
+
+  --color-secondary: #d4af37;
+  --color-secondary-hover: #b8941f;
+  --color-secondary-muted: #fef3c7;
+
+  /* Neutrals */
+  --color-soft-gray: #f9fafb;
+  --color-slate: #4b5563;
+  --color-charcoal: #111827;
+  --color-white: #ffffff;
+  --color-border: #e5e7eb;
+
+  /* Semantic aliases */
+  --color-background: var(--color-soft-gray);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-charcoal);
+  --color-text-muted: var(--color-slate);
+  --color-accent: var(--color-secondary);
+  --color-brand: var(--color-primary);
+
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-size-base: 1rem;
+  --font-size-sm: 0.875rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --line-height-body: 1.6;
+  --line-height-heading: 1.25;
+
+  /* Layout & aesthetics */
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --space-section: 1.5rem;
+  --shadow-subtle: 0 4px 24px rgba(17, 24, 39, 0.06);
+  --shadow-card: 0 20px 50px -12px rgba(0, 0, 0, 0.35);
+  --gradient-amber: linear-gradient(
+    135deg,
+    #fde08b 0%,
+    #d4af37 50%,
+    #997a15 100%
+  );
+  --gradient-teal: radial-gradient(
+    ellipse at center,
+    #0d9488 0%,
+    #0f766e 55%,
+    #0a5c56 100%
+  );
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background-color: var(--color-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body);
+    color: var(--color-text);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    color: var(--color-charcoal);
+    font-weight: 700;
+    line-height: var(--line-height-heading);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background-color: var(--color-primary-muted);
+    color: var(--color-charcoal);
+  }
+}
+
+@layer components {
+  .tn-auth-bg {
+    background: var(--gradient-teal);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tn-auth-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23085f58' stroke-width='1'%3E%3Cpath d='M0 40h200M0 80h200M0 120h200M0 160h200M40 0v200M80 0v200M120 0v200M160 0v200'/%3E%3Cpath d='M20 20h40v40H20zM100 60h60v40h-60zM60 120h50v50H60zM140 140h40v40h-40z'/%3E%3Cpath d='M0 100c40-20 80 20 120 0s80 20 80 20M50 0c10 40-10 80 10 120s-10 80-10 80'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 220px 220px;
+    pointer-events: none;
+  }
+
+  .tn-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--color-secondary);
+    box-shadow: var(--shadow-card);
+    padding: 2rem 1.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tn-underline-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #d1d5db;
+    border-radius: 0;
+    background: transparent;
+    padding: 0.5rem 0;
+    color: var(--color-charcoal);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 150ms ease;
+  }
+
+  .tn-underline-input::placeholder {
+    color: #9ca3af;
+  }
+
+  .tn-underline-input:focus {
+    border-bottom-color: var(--color-secondary);
+  }
+
+  .tn-btn-accent {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background: var(--gradient-amber);
+    color: var(--color-charcoal);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1.25rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -6px rgba(245, 158, 11, 0.55);
+    transition: filter 150ms ease, transform 150ms ease;
+  }
+
+  .tn-btn-accent:hover {
+    filter: brightness(1.05);
+  }
+
+  .tn-btn-accent:active {
+    transform: translateY(1px);
+  }
+
+  .tn-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-slate);
+  }
+}
