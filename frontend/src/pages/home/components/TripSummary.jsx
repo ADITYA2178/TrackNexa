@@ -5,16 +5,16 @@ export default function TripSummary() {
   return (
     <Card>
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#8E722B]">
+        <div className="flex flex-col">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-deep">
             Your next trip
           </p>
-          <h2 className="mt-2 font-heading text-2xl font-bold text-[#073936]">
+          <h2 className="mt-2 font-heading text-2xl font-bold text-charcoal">
             NEXA EXPRESS
           </h2>
           <p className="text-sm font-semibold text-slate">Train No. 12345</p>
         </div>
-        <span className="rounded-full bg-[#E7F8EC] px-3 py-1 text-xs font-bold uppercase text-[#245E2E]">
+        <span className="rounded-full bg-secondary-muted px-3 py-1 text-xs font-bold uppercase text-primary-deep">
           On Time
         </span>
       </div>
@@ -23,14 +23,14 @@ export default function TripSummary() {
         <MiniMap />
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-[#F7F2E5] p-4">
+      <div className="mt-6 flex gap-3">
+        <div className="flex flex-1 flex-col rounded-2xl bg-sky-soft p-4">
           <p className="text-xs text-slate">Departure</p>
-          <p className="mt-1 text-lg font-bold text-[#073936]">12:00 AM</p>
+          <p className="mt-1 text-lg font-bold text-charcoal">12:00 AM</p>
         </div>
-        <div className="rounded-2xl bg-[#F7F2E5] p-4">
+        <div className="flex flex-1 flex-col rounded-2xl bg-sky-soft p-4">
           <p className="text-xs text-slate">Platform</p>
-          <p className="mt-1 text-lg font-bold text-[#073936]">#2</p>
+          <p className="mt-1 text-lg font-bold text-charcoal">#2</p>
         </div>
       </div>
     </Card>

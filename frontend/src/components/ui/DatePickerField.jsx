@@ -18,21 +18,21 @@ function CalendarDropdown({ options = [], value, onChange, disabled, 'aria-label
         aria-label={ariaLabel}
         disabled={disabled}
         onClick={() => setOpen((current) => !current)}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-[#E4D7AD] bg-white px-3 py-2 text-sm font-semibold text-[#073936] disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-between gap-2 rounded-xl border-2 border-line bg-white px-3 py-2 text-sm font-semibold text-charcoal disabled:cursor-not-allowed disabled:opacity-60"
       >
         <span>{selectedOption?.label}</span>
-        <span className="text-xs text-[#8E722B]">v</span>
+        <span className="text-xs text-primary-deep">v</span>
       </button>
 
       {open ? (
-        <div className="absolute left-0 top-[calc(100%+0.25rem)] z-[70] max-h-[320px] w-max min-w-full overflow-y-auto rounded-xl border border-[#E4D7AD] bg-white py-1 shadow-2xl">
+        <div className="absolute left-0 top-[calc(100%+0.25rem)] z-[70] flex max-h-[320px] w-max min-w-full flex-col overflow-y-auto rounded-xl border-2 border-line bg-white py-1 shadow-card">
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
               disabled={option.disabled}
               onClick={() => chooseOption(option)}
-              className="block w-full whitespace-nowrap px-3 py-2 text-left text-sm text-[#111827] hover:bg-[#F7EAC2] disabled:cursor-not-allowed disabled:opacity-40"
+              className="block w-full whitespace-nowrap px-3 py-2 text-left text-sm text-charcoal hover:bg-sky-soft disabled:cursor-not-allowed disabled:opacity-40"
             >
               {option.label}
             </button>
@@ -54,21 +54,21 @@ export default function DatePickerField({ label, icon, value, onChange, classNam
     : 'Select date'
 
   return (
-    <div className={`relative z-30 rounded-xl border border-[#E4D7AD] px-4 py-3 ${className}`}>
+    <div className={`relative z-30 flex flex-1 flex-col rounded-2xl border-2 border-line bg-white px-4 py-3 ${className}`}>
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="w-full text-left"
+        className="flex w-full flex-col text-left"
       >
-        <span className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#8E722B]">
+        <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary-deep">
           {icon}
           {label}
         </span>
-        <span className="text-base font-semibold text-[#111827]">{displayValue}</span>
+        <span className="text-base font-semibold text-charcoal">{displayValue}</span>
       </button>
 
       {open ? (
-        <div className="absolute left-1/2 top-[calc(100%+0.5rem)] z-50 max-h-[420px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto rounded-2xl border border-[#E4D7AD] bg-white p-3 text-[#111827] shadow-2xl sm:left-0 sm:translate-x-0">
+        <div className="absolute left-1/2 top-[calc(100%+0.5rem)] z-50 max-h-[420px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto rounded-2xl border-2 border-line bg-white p-3 text-charcoal shadow-card sm:left-0 sm:translate-x-0">
           <DayPicker
             mode="single"
             selected={value}

@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import SeatSelectionPage from './pages/booking/SeatSelectionPage'
 import HomePage from './pages/home/HomePage'
 import LoginPage from './pages/login/LoginPage'
 import SignUpPage from './pages/signup/SignUpPage'
@@ -36,6 +37,14 @@ function App() {
             }
           />
           <Route
+            path="/trains/:trainNo/seats"
+            element={
+              <ProtectedRoute>
+                <SeatSelectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/signup"
             element={<SignUpPage />}
           />
@@ -46,8 +55,8 @@ function App() {
           toastOptions={{
             duration: 3500,
             style: {
-              border: '1px solid #E9DFC0',
-              color: '#073936',
+              border: '2px solid #5A8FA8',
+              color: '#042A3A',
               fontWeight: 600,
             },
           }}

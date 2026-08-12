@@ -4,9 +4,9 @@ export default function ShortcutCard({ icon, label }) {
   return (
     <button
       type="button"
-      className="group flex items-center gap-3 rounded-2xl border border-[#E9DFC0] bg-white px-4 py-4 text-left text-sm text-[#111827] shadow-sm transition hover:-translate-y-0.5 hover:border-secondary hover:shadow-lg"
+      className="group flex flex-1 items-center gap-3 rounded-2xl border-2 border-line bg-white px-4 py-4 text-left text-sm text-charcoal shadow-sm transition hover:-translate-y-0.5 hover:border-primary-deep hover:shadow-glow"
     >
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#F7EAC2] text-secondary transition group-hover:bg-gold-gradient group-hover:text-[#073936]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-soft text-primary-deep transition group-hover:bg-aqua-gradient group-hover:text-charcoal">
         <LineIcon type={icon} className="h-6 w-6" />
       </span>
       <span className="font-semibold">{label}</span>
