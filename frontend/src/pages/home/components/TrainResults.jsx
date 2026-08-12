@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import TrainRoute from './TrainRoute'
 
 function formatStationName(name = '') {
   return name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
@@ -100,6 +101,12 @@ export default function TrainResults({ result }) {
                   <p className="mt-0.5 text-xs text-slate">{formatStationName(train.to?.name)}</p>
                 </div>
               </div>
+
+              <TrainRoute
+                from={result.from ?? train.from?.code}
+                to={result.to ?? train.to?.code}
+                trainNo={train.trainNo}
+              />
 
               <button
                 type="button"
