@@ -1,30 +1,34 @@
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 import TrachNexaLogo from '../../../assets/TrachNexaLogo'
 import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
-import Dropdown from '../../../components/ui/Dropdown'
+import StationSelect from '../../../components/ui/StationSelect'
 import TextInput from '../../../components/ui/TextInput'
 import { buildApiUrl } from '../../../config/api'
 import { LineIcon } from './HomeIcons'
 
-const stationOptions = [
-  { label: 'Mumbai Central', value: 'mumbai-central' },
-  { label: 'New Delhi', value: 'new-delhi' },
-  { label: 'Bengaluru City', value: 'bengaluru-city' },
-  { label: 'Howrah Junction', value: 'howrah-junction' },
-]
-
 export default function JourneySearch() {
-  const [origin, setOrigin] = useState('mumbai-central')
-  const [destination, setDestination] = useState('new-delhi')
+  const [origin, setOrigin] = useState(null)
+  const [destination, setDestination] = useState(null)
   const [journeyDate, setJourneyDate] = useState(new Date())
   const [passengers, setPassengers] = useState('1 passenger')
 
   const handleSearch = () => {
+    if (!origin?.station_code || !destination?.station_code) {
+      toast.error('Please select both From and To stations')
+      return
+    }
+
+    if (origin.station_code === destination.station_code) {
+      toast.error('From and To stations must be different')
+      return
+    }
+
     const searchUrl = buildApiUrl('/trains/search')
     console.info('Search trains API:', searchUrl, {
-      origin,
-      destination,
+      from: origin.station_code,
+      to: destination.station_code,
       journeyDate,
       passengers,
     })
@@ -54,19 +58,19 @@ export default function JourneySearch() {
 
       <div className="relative z-20 mt-8 rounded-2xl border border-white/15 bg-white p-4 text-[#111827] shadow-2xl sm:p-5">
         <div className="grid gap-4 xl:grid-cols-[1fr_1fr_180px_180px]">
-          <Dropdown
+          <StationSelect
             label="From"
             icon={<LineIcon type="pin" className="h-4 w-4" />}
-            options={stationOptions}
             value={origin}
             onChange={setOrigin}
+            placeholder="Search station"
           />
-          <Dropdown
+          <StationSelect
             label="To"
             icon={<LineIcon type="swap" className="h-4 w-4" />}
-            options={stationOptions}
             value={destination}
             onChange={setDestination}
+            placeholder="Search station"
           />
           <DatePickerField
             label="Date"
