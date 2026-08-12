@@ -89,9 +89,9 @@ export default function StationSelect({
   }
 
   return (
-    <div ref={containerRef} className={`relative ${open ? 'z-40' : 'z-10'} ${className}`}>
-      <label className="block rounded-xl border border-[#E4D7AD] px-4 py-3">
-        <span className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-[#8E722B]">
+    <div ref={containerRef} className={`relative flex-1 ${open ? 'z-40' : 'z-10'} ${className}`}>
+      <label className="flex flex-col rounded-2xl border-2 border-line bg-white px-4 py-3">
+        <span className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-primary-deep">
           {icon}
           {label}
         </span>
@@ -103,12 +103,12 @@ export default function StationSelect({
             placeholder={placeholder}
             autoComplete="off"
             spellCheck={false}
-            className="w-full bg-transparent text-base font-semibold text-[#111827] outline-none placeholder:font-medium placeholder:text-slate/50"
+            className="w-full bg-transparent text-base font-semibold text-charcoal outline-none placeholder:font-medium placeholder:text-slate"
           />
           <svg
             viewBox="0 0 20 20"
             fill="none"
-            className={`h-4 w-4 shrink-0 text-[#8E722B] transition-transform ${open ? 'rotate-180' : ''}`}
+            className={`h-4 w-4 shrink-0 text-primary-deep transition-transform ${open ? 'rotate-180' : ''}`}
             aria-hidden="true"
           >
             <path
@@ -123,17 +123,17 @@ export default function StationSelect({
       </label>
 
       {open ? (
-        <div className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-50 overflow-hidden rounded-xl border border-[#E4D7AD] bg-white shadow-2xl">
+        <div className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-50 overflow-hidden rounded-2xl border-2 border-line bg-white shadow-card">
           {!canSearch ? (
-            <p className="px-4 py-3 text-sm text-slate/70">Type at least 2 characters to search</p>
+            <p className="px-4 py-3 text-sm text-slate">Type at least 2 characters to search</p>
           ) : isFetching ? (
-            <p className="px-4 py-3 text-sm text-slate/70">Searching stations...</p>
+            <p className="px-4 py-3 text-sm text-slate">Searching stations...</p>
           ) : isError ? (
             <p className="px-4 py-3 text-sm text-red-600">{error.message}</p>
           ) : stations.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-slate/70">No stations found</p>
+            <p className="px-4 py-3 text-sm text-slate">No stations found</p>
           ) : (
-            <ul className="max-h-64 overflow-y-auto py-1">
+            <ul className="flex max-h-64 flex-col overflow-y-auto py-1">
               {stations.map((station) => {
                 const isSelected = value?.station_code === station.station_code
 
@@ -143,19 +143,19 @@ export default function StationSelect({
                       type="button"
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => selectStation(station)}
-                      className={`flex w-full items-start justify-between gap-3 px-4 py-2.5 text-left hover:bg-[#F7EAC2] ${
-                        isSelected ? 'bg-[#F7EAC2]' : ''
+                      className={`flex w-full items-start justify-between gap-3 px-4 py-2.5 text-left hover:bg-sky-soft ${
+                        isSelected ? 'bg-sky-soft' : ''
                       }`}
                     >
-                      <span>
-                        <span className="block text-sm font-semibold text-[#111827]">
+                      <span className="flex flex-col">
+                        <span className="text-sm font-semibold text-charcoal">
                           {formatStationName(station.station_name)}
                         </span>
-                        <span className="mt-0.5 block text-xs text-slate/70">
+                        <span className="mt-0.5 text-xs text-slate">
                           {formatStationName(station.city)}
                         </span>
                       </span>
-                      <span className="shrink-0 rounded-md bg-[#073936] px-2 py-0.5 text-xs font-bold tracking-wide text-white">
+                      <span className="shrink-0 rounded-full bg-charcoal px-2 py-0.5 text-xs font-bold tracking-wide text-white">
                         {station.station_code}
                       </span>
                     </button>

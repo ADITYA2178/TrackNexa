@@ -1,18 +1,30 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import TrachNexaLogo from '../../../assets/TrachNexaLogo'
+import { formatJourneyDate, searchTrains } from '../../../api/trains'
 import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
 import StationSelect from '../../../components/ui/StationSelect'
 import TextInput from '../../../components/ui/TextInput'
-import { buildApiUrl } from '../../../config/api'
 import { LineIcon } from './HomeIcons'
+import TrainResults from './TrainResults'
 
 export default function JourneySearch() {
   const [origin, setOrigin] = useState(null)
   const [destination, setDestination] = useState(null)
   const [journeyDate, setJourneyDate] = useState(new Date())
   const [passengers, setPassengers] = useState('1 passenger')
+
+  const searchMutation = useMutation({
+    mutationFn: searchTrains,
+    onSuccess: (data) => {
+      toast.success(`${data?.total ?? data?.trains?.length ?? 0} trains found`)
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   const handleSearch = () => {
     if (!origin?.station_code || !destination?.station_code) {
@@ -25,21 +37,25 @@ export default function JourneySearch() {
       return
     }
 
-    const searchUrl = buildApiUrl('/trains/search')
-    console.info('Search trains API:', searchUrl, {
+    if (!journeyDate) {
+      toast.error('Please select a journey date')
+      return
+    }
+
+    searchMutation.mutate({
       from: origin.station_code,
       to: destination.station_code,
-      journeyDate,
-      passengers,
+      date: formatJourneyDate(journeyDate),
     })
   }
 
   return (
     <section
       id="book"
-      className="relative overflow-visible rounded-3xl bg-[#073936] p-6 text-white shadow-[0_18px_45px_rgba(7,57,54,0.28)] sm:p-8"
+      className="relative overflow-visible rounded-[2rem] bg-charcoal p-6 text-white shadow-card sm:p-8"
     >
-      <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full border border-secondary/30" />
+      <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-secondary/20 blur-2xl" />
+      <div className="pointer-events-none absolute bottom-0 left-10 h-32 w-32 rounded-full bg-sky/20 blur-2xl" />
       <div className="absolute bottom-6 right-8 hidden text-secondary/20 sm:block">
         <TrachNexaLogo className="h-40 w-40" />
       </div>
@@ -48,7 +64,7 @@ export default function JourneySearch() {
         <p className="text-sm font-semibold uppercase tracking-[0.22em] text-secondary">
           Plan your journey
         </p>
-        <h2 className="mt-3 font-heading text-3xl font-bold leading-tight sm:text-5xl">
+        <h2 className="mt-3 font-heading text-3xl font-bold leading-tight text-white sm:text-5xl">
           Where are you traveling today?
         </h2>
         <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">
@@ -56,8 +72,8 @@ export default function JourneySearch() {
         </p>
       </div>
 
-      <div className="relative z-20 mt-8 rounded-2xl border border-white/15 bg-white p-4 text-[#111827] shadow-2xl sm:p-5">
-        <div className="grid gap-4 xl:grid-cols-[1fr_1fr_180px_180px]">
+      <div className="relative z-20 mt-8 rounded-3xl border-2 border-line bg-white p-4 text-charcoal shadow-2xl sm:p-5">
+        <div className="flex flex-col gap-4 xl:flex-row">
           <StationSelect
             label="From"
             icon={<LineIcon type="pin" className="h-4 w-4" />}
@@ -86,9 +102,15 @@ export default function JourneySearch() {
           />
         </div>
 
-        <Button className="mt-4 w-full py-3.5 text-base" onClick={handleSearch}>
-          Search Trains
+        <Button
+          className="mt-4 w-full py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-70"
+          onClick={handleSearch}
+          disabled={searchMutation.isPending}
+        >
+          {searchMutation.isPending ? 'Searching...' : 'Search Trains'}
         </Button>
+
+        {searchMutation.data ? <TrainResults result={searchMutation.data} /> : null}
       </div>
     </section>
   )

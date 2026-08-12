@@ -31,16 +31,16 @@ function Field({
       <label htmlFor={id} className="tn-label">
         {label}
       </label>
-      <div className="flex items-center gap-2 border-b-[1.5px] border-gray-300 transition-colors focus-within:border-secondary">
+      <div className="flex items-center gap-2 border-b-2 border-line transition-colors focus-within:border-primary-deep">
         {leftAddon}
-        <span className="shrink-0 text-secondary">{icon}</span>
+        <span className="shrink-0 text-primary-deep">{icon}</span>
         <input
           id={id}
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="w-full border-none bg-transparent py-2 text-[0.95rem] text-charcoal outline-none placeholder:text-gray-400"
+          className="w-full border-none bg-transparent py-2 text-[0.95rem] text-charcoal outline-none placeholder:text-slate"
           autoComplete={
             type === 'password'
               ? 'new-password'
@@ -113,8 +113,8 @@ export default function SignUp() {
     <>
       <div className="tn-card">
         <div className="mb-5 flex flex-col items-center text-center">
-          <TrachNexaLogo className="mb-2 h-12 w-12 text-secondary" />
-          <p className="font-heading text-xl font-bold tracking-[0.08em] text-secondary">
+          <TrachNexaLogo className="mb-2 h-12 w-12 text-primary-deep" />
+          <p className="font-heading text-xl font-bold tracking-[0.08em] text-primary-deep">
             TRACK NEXA
           </p>
           <h1 className="mt-3 font-heading text-[1.55rem] font-bold leading-tight text-charcoal sm:text-[1.7rem]">
@@ -175,7 +175,7 @@ export default function SignUp() {
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
-                className="shrink-0 text-secondary"
+                className="shrink-0 text-primary-deep"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeIcon /> : <EyeOffIcon />}
@@ -195,7 +195,7 @@ export default function SignUp() {
               <button
                 type="button"
                 onClick={() => setShowConfirm((v) => !v)}
-                className="shrink-0 text-secondary"
+                className="shrink-0 text-primary-deep"
                 aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
               >
                 {showConfirm ? <EyeIcon /> : <EyeOffIcon />}
@@ -212,11 +212,11 @@ export default function SignUp() {
             />
             <span>
               I agree to the{' '}
-              <a href="#terms" className="font-semibold text-primary hover:text-primary-hover">
+              <a href="#terms" className="font-semibold text-primary-deep hover:text-primary">
                 Terms of Service
               </a>{' '}
               and{' '}
-              <a href="#privacy" className="font-semibold text-primary hover:text-primary-hover">
+              <a href="#privacy" className="font-semibold text-primary-deep hover:text-primary">
                 Privacy Policy
               </a>
             </span>
@@ -234,9 +234,9 @@ export default function SignUp() {
 
       <div className="mt-6 flex items-center gap-3">
         <div className="h-px flex-1 bg-white/35" />
-        <p className="whitespace-nowrap text-sm text-white/90">
+        <p className="whitespace-nowrap text-sm font-semibold text-white">
           Already have an account?{' '}
-          <Link to="/login" className="font-bold text-secondary hover:text-secondary-hover">
+          <Link to="/login" className="font-bold text-white hover:text-secondary">
             Log In
           </Link>
         </p>
