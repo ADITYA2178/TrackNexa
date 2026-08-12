@@ -1,18 +1,30 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import TrachNexaLogo from '../../../assets/TrachNexaLogo'
+import { formatJourneyDate, searchTrains } from '../../../api/trains'
 import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
 import StationSelect from '../../../components/ui/StationSelect'
 import TextInput from '../../../components/ui/TextInput'
-import { buildApiUrl } from '../../../config/api'
 import { LineIcon } from './HomeIcons'
+import TrainResults from './TrainResults'
 
 export default function JourneySearch() {
   const [origin, setOrigin] = useState(null)
   const [destination, setDestination] = useState(null)
   const [journeyDate, setJourneyDate] = useState(new Date())
   const [passengers, setPassengers] = useState('1 passenger')
+
+  const searchMutation = useMutation({
+    mutationFn: searchTrains,
+    onSuccess: (data) => {
+      toast.success(`${data?.total ?? data?.trains?.length ?? 0} trains found`)
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   const handleSearch = () => {
     if (!origin?.station_code || !destination?.station_code) {
@@ -25,12 +37,15 @@ export default function JourneySearch() {
       return
     }
 
-    const searchUrl = buildApiUrl('/trains/search')
-    console.info('Search trains API:', searchUrl, {
+    if (!journeyDate) {
+      toast.error('Please select a journey date')
+      return
+    }
+
+    searchMutation.mutate({
       from: origin.station_code,
       to: destination.station_code,
-      journeyDate,
-      passengers,
+      date: formatJourneyDate(journeyDate),
     })
   }
 
@@ -86,9 +101,15 @@ export default function JourneySearch() {
           />
         </div>
 
-        <Button className="mt-4 w-full py-3.5 text-base" onClick={handleSearch}>
-          Search Trains
+        <Button
+          className="mt-4 w-full py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-70"
+          onClick={handleSearch}
+          disabled={searchMutation.isPending}
+        >
+          {searchMutation.isPending ? 'Searching...' : 'Search Trains'}
         </Button>
+
+        {searchMutation.data ? <TrainResults result={searchMutation.data} /> : null}
       </div>
     </section>
   )
