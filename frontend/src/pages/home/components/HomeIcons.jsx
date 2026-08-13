@@ -73,6 +73,17 @@ export function LineIcon({ type, className = 'h-5 w-5' }) {
     )
   }
 
+  if (type === 'map') {
+    return (
+      <svg {...common}>
+        <path d="M9 4 3 6.5V20l6-2.5L15 20l6-2.5V4.5L15 7 9 4Z" />
+        <path d="M9 4v13.5M15 7v13" />
+        <circle cx="15" cy="11" r="2.2" />
+        <path d="M15 13.2V17" />
+      </svg>
+    )
+  }
+
   return (
     <svg {...common}>
       <path d="M3 11 12 4l9 7" />

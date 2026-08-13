@@ -52,28 +52,28 @@ export default function JourneySearch() {
   return (
     <section
       id="book"
-      className="relative overflow-visible rounded-[2rem] bg-charcoal p-6 text-white shadow-card sm:p-8"
+      className="relative overflow-visible rounded-[1.5rem] bg-charcoal p-4 text-white shadow-card sm:rounded-[2rem] sm:p-6 md:p-8"
     >
       <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-secondary/20 blur-2xl" />
       <div className="pointer-events-none absolute bottom-0 left-10 h-32 w-32 rounded-full bg-sky/20 blur-2xl" />
-      <div className="absolute bottom-6 right-8 hidden text-secondary/20 sm:block">
+      <div className="absolute bottom-6 right-8 hidden text-secondary/20 lg:block">
         <TrachNexaLogo className="h-40 w-40" />
       </div>
 
       <div className="relative max-w-2xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.22em] text-secondary">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-secondary sm:text-sm">
           Plan your journey
         </p>
-        <h2 className="mt-3 font-heading text-3xl font-bold leading-tight text-white sm:text-5xl">
+        <h2 className="mt-2 font-heading text-2xl font-bold leading-tight text-white sm:mt-3 sm:text-4xl md:text-5xl">
           Where are you traveling today?
         </h2>
-        <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">
+        <p className="mt-2 max-w-xl text-sm text-white/75 sm:mt-3 sm:text-base">
           Search routes, compare trains, and keep every trip detail in one place.
         </p>
       </div>
 
-      <div className="relative z-20 mt-8 rounded-3xl border-2 border-line bg-white p-4 text-charcoal shadow-2xl sm:p-5">
-        <div className="flex flex-col gap-4 xl:flex-row">
+      <div className="relative z-20 mt-6 rounded-2xl border-2 border-line bg-white p-3 text-charcoal shadow-2xl sm:mt-8 sm:rounded-3xl sm:p-5">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StationSelect
             label="From"
             icon={<LineIcon type="pin" className="h-4 w-4" />}

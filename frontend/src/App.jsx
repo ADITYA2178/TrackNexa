@@ -51,13 +51,19 @@ function App() {
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
         <Toaster
-          position="top-right"
+          position="top-center"
+          containerStyle={{
+            top: 12,
+            left: 12,
+            right: 12,
+          }}
           toastOptions={{
             duration: 3500,
             style: {
               border: '2px solid #5A8FA8',
               color: '#042A3A',
               fontWeight: 600,
+              maxWidth: 'min(420px, calc(100vw - 1.5rem))',
             },
           }}
         />

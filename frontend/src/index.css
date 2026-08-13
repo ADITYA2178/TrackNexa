@@ -59,9 +59,25 @@
   body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh;
     font-size: var(--font-size-base);
     line-height: var(--line-height-body);
     color: var(--color-text);
+    overflow-x: clip;
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
   }
 
   h1,
@@ -105,9 +121,15 @@
     border-radius: 1.5rem;
     border: 2px solid #5a8fa8;
     box-shadow: var(--shadow-card);
-    padding: 2rem 1.75rem;
+    padding: 1.5rem 1.25rem;
     position: relative;
     z-index: 1;
+  }
+
+  @media (min-width: 640px) {
+    .tn-card {
+      padding: 2rem 1.75rem;
+    }
   }
 
   .tn-underline-input {
