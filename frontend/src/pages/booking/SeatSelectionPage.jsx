@@ -1,51 +1,19 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { useLocation, useNavigate } from 'react-router-dom'
 import TrachNexaLogo from '../../assets/TrachNexaLogo'
+import { getSeatAvailability, TRAVEL_CLASSES } from '../../api/availability'
 import Button from '../../components/ui/Button'
-
-const travelClasses = [
-  {
-    code: 'SL',
-    name: 'Sleeper',
-    fare: 485,
-    capacity: 72,
-    available: 42,
-    coaches: ['S1', 'S2', 'S3'],
-    berthPattern: ['Lower', 'Middle', 'Upper', 'Lower', 'Middle', 'Upper', 'Side Lower', 'Side Upper'],
-    cabinSize: 6,
-  },
-  {
-    code: '3A',
-    name: 'AC 3 Tier',
-    fare: 1120,
-    capacity: 64,
-    available: 18,
-    coaches: ['B1', 'B2'],
-    berthPattern: ['Lower', 'Middle', 'Upper', 'Lower', 'Middle', 'Upper', 'Side Lower', 'Side Upper'],
-    cabinSize: 6,
-  },
-  {
-    code: '2A',
-    name: 'AC 2 Tier',
-    fare: 1640,
-    capacity: 46,
-    available: 7,
-    coaches: ['A1'],
-    berthPattern: ['Lower', 'Upper', 'Lower', 'Upper', 'Side Lower', 'Side Upper'],
-    cabinSize: 4,
-  },
-]
-
-const ladiesSeats = new Set([1, 7, 19])
+import { CoachGridSkeleton, Skeleton } from '../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
 }
 
 function formatTime(time = '') {
-  const [hours, minutes] = time.split(':').map(Number)
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return time
+  const [hours, minutes] = String(time).split(':').map(Number)
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) return time || '--'
   return `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${hours >= 12 ? 'PM' : 'AM'}`
 }
 
@@ -57,103 +25,135 @@ function getStoredSelection() {
   }
 }
 
-function SeatIcon({ seat, selected, onSelect }) {
-  const coachSeed = seat.coach.charCodeAt(seat.coach.length - 1)
-  const unavailable = (seat.number + coachSeed) % 5 === 0 || (seat.number + coachSeed) % 13 === 0
-  const ladies = ladiesSeats.has(seat.number) && !unavailable
+function occupancyTone(available, total) {
+  if (!total) return 'bg-slate/20'
+  const ratio = available / total
+  if (ratio > 0.4) return 'bg-secondary'
+  if (ratio > 0.15) return 'bg-primary'
+  return 'bg-[#E07A7A]'
+}
 
-  const tone = selected
-    ? 'border-charcoal bg-charcoal text-white shadow-glow'
-    : unavailable
-      ? 'cursor-not-allowed border-[#D5E6EC] bg-[#EEF4F7] text-[#A8B8BF]'
-      : ladies
-        ? 'border-[#F3B4D0] bg-[#FFF0F7] text-[#8A3A62] hover:border-[#E07AA8]'
-        : 'border-line bg-[#E8FBFF] text-charcoal hover:border-primary-deep hover:bg-sky-soft'
+function ClassCard({ travelClass, active, availability, loading, onSelect }) {
+  const available = availability?.availableSeats
+  const status = availability?.status
+  const unavailable = status === 'NOT_AVAILABLE' || available === 0
+  const notOffered = availability?.notOffered
 
   return (
     <button
       type="button"
-      disabled={unavailable}
-      onClick={() => onSelect(seat)}
-      aria-label={`Seat ${seat.number}, ${seat.berth}${unavailable ? ', unavailable' : ''}`}
-      className={`relative flex h-12 min-w-9 flex-1 flex-col items-center justify-center rounded-lg border-2 transition sm:h-14 sm:min-w-11 sm:rounded-xl ${tone}`}
+      onClick={() => onSelect(travelClass)}
+      className={`flex min-w-[9.5rem] flex-col rounded-2xl border-2 p-3.5 text-left transition sm:min-w-0 sm:p-4 ${
+        active
+          ? 'border-charcoal bg-charcoal text-white shadow-card'
+          : 'border-line bg-white hover:border-primary-deep'
+      }`}
     >
-      <span className="text-xs font-extrabold sm:text-sm">{seat.number}</span>
-      <span className="text-[10px] font-bold uppercase tracking-wide">{seat.berth.slice(0, 2)}</span>
-      <span
-        className={`absolute -right-0.5 top-2 h-5 w-1 rounded-l sm:h-7 ${
-          selected ? 'bg-secondary' : unavailable ? 'bg-[#D5E6EC]' : 'bg-current opacity-30'
-        }`}
-      />
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-col">
+          <p className={`text-xs font-bold ${active ? 'text-secondary' : 'text-primary-deep'}`}>
+            {travelClass.code}
+          </p>
+          <p className="mt-1 truncate text-sm font-bold sm:text-base">{travelClass.name}</p>
+        </div>
+        {active ? <span className="text-secondary">✓</span> : null}
+      </div>
+
+      <div className="mt-3 flex flex-col gap-0.5">
+        {loading ? (
+          <div className="flex flex-col gap-2">
+            <Skeleton className={`h-3.5 w-20 ${active ? 'bg-white/25' : ''}`} rounded="md" />
+            <Skeleton className={`h-2.5 w-28 ${active ? 'bg-white/15' : ''}`} rounded="md" />
+          </div>
+        ) : notOffered ? (
+          <span className={`text-xs font-semibold ${active ? 'text-white/60' : 'text-slate'}`}>
+            Not on this train
+          </span>
+        ) : availability ? (
+          <>
+            <span
+              className={`text-sm font-extrabold ${
+                unavailable
+                  ? active
+                    ? 'text-white/70'
+                    : 'text-slate'
+                  : active
+                    ? 'text-secondary'
+                    : 'text-charcoal'
+              }`}
+            >
+              {unavailable ? 'Waitlist / full' : `${available} seats`}
+            </span>
+            <span className={`text-[11px] font-semibold ${active ? 'text-white/55' : 'text-slate'}`}>
+              {availability.totalSeats} total · {availability.coaches?.length ?? 0} coaches
+            </span>
+          </>
+        ) : (
+          <span className={`text-xs font-semibold ${active ? 'text-white/70' : 'text-slate'}`}>
+            Tap to check
+          </span>
+        )}
+      </div>
     </button>
   )
 }
 
-function CoachMap({ coach, travelClass, selectedSeats, onSelect }) {
-  const seats = Array.from({ length: travelClass.capacity }, (_, index) => ({
-    id: `${coach}-${index + 1}`,
-    coach,
-    number: index + 1,
-    berth: travelClass.berthPattern[index % travelClass.berthPattern.length],
-  }))
-  const rowSize = travelClass.berthPattern.length
-  const rows = []
-
-  for (let index = 0; index < seats.length; index += rowSize) {
-    rows.push(seats.slice(index, index + rowSize))
-  }
+function CoachCard({ coach, selected, onSelect }) {
+  const available = coach.availableSeats ?? 0
+  const total = coach.totalSeats ?? 0
+  const booked = coach.bookedSeats ?? 0
+  const held = coach.heldSeats ?? 0
+  const fill = total ? Math.max(0, Math.min(100, ((total - available) / total) * 100)) : 100
+  const disabled = available <= 0
 
   return (
-    <div className="-mx-1 overflow-x-auto px-1 pb-2">
-      <div className="flex min-w-[min(100%,420px)] w-max max-w-none flex-col rounded-[22px] border-2 border-line bg-white p-3 sm:min-w-[540px] sm:rounded-[28px] sm:p-4">
-        <div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-charcoal px-3 py-3 text-white sm:mb-4 sm:px-4">
-          <div className="flex min-w-0 flex-col">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
-              You are inside
-            </p>
-            <p className="text-base font-bold sm:text-lg">Coach {coach}</p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2 text-[10px] font-semibold text-white/70 sm:text-xs">
-            <span>← Entry</span>
-            <span className="h-5 w-px bg-white/20" />
-            <span>Washroom →</span>
-          </div>
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => onSelect(coach)}
+      className={`flex w-full flex-col rounded-2xl border-2 p-4 text-left transition ${
+        selected
+          ? 'border-charcoal bg-charcoal text-white shadow-card'
+          : disabled
+            ? 'cursor-not-allowed border-line bg-[#F3F7F9] text-slate opacity-70'
+            : 'border-line bg-white hover:border-primary-deep hover:shadow-sm'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col">
+          <p className={`text-[10px] font-bold uppercase tracking-[0.18em] ${selected ? 'text-secondary' : 'text-primary-deep'}`}>
+            Coach
+          </p>
+          <p className="mt-1 font-heading text-xl font-bold sm:text-2xl">
+            {coach.coachNumber}
+          </p>
         </div>
-
-        <div className="flex flex-col gap-2">
-          {rows.map((row, rowIndex) => {
-            const cabinSeats = row.slice(0, travelClass.cabinSize)
-            const sideSeats = row.slice(travelClass.cabinSize)
-
-            return (
-              <div key={`${coach}-row-${rowIndex}`} className="flex items-stretch gap-1.5 sm:gap-2">
-                <div className="flex flex-[3] gap-1.5 sm:gap-2">
-                  {cabinSeats.map((seat) => (
-                    <SeatIcon
-                      key={seat.id}
-                      seat={seat}
-                      selected={selectedSeats.some((selected) => selected.id === seat.id)}
-                      onSelect={onSelect}
-                    />
-                  ))}
-                </div>
-                <div className="w-4 shrink-0 self-stretch rounded-full bg-sky-mist sm:w-8 sm:bg-white/70" />
-                <div className="flex flex-1 gap-1.5 sm:gap-2">
-                  {sideSeats.map((seat) => (
-                    <SeatIcon
-                      key={seat.id}
-                      seat={seat}
-                      selected={selectedSeats.some((selected) => selected.id === seat.id)}
-                      onSelect={onSelect}
-                    />
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-extrabold ${
+            selected
+              ? 'bg-aqua-gradient text-charcoal'
+              : disabled
+                ? 'bg-[#E8EEF1] text-slate'
+                : 'bg-sky-soft text-primary-deep'
+          }`}
+        >
+          {disabled ? 'Full' : `${available} free`}
+        </span>
       </div>
-    </div>
+
+      <div className="mt-4 h-2 overflow-hidden rounded-full bg-black/10">
+        <div
+          className={`h-full rounded-full transition-all ${selected ? 'bg-secondary' : occupancyTone(available, total)}`}
+          style={{ width: `${fill}%` }}
+        />
+      </div>
+
+      <div className={`mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-semibold ${selected ? 'text-white/70' : 'text-slate'}`}>
+        <span>{total} seats</span>
+        <span>{booked} booked</span>
+        <span>{held} held</span>
+      </div>
+    </button>
   )
 }
 
@@ -162,14 +162,94 @@ export default function SeatSelectionPage() {
   const location = useLocation()
   const selection = location.state ?? getStoredSelection()
   const train = selection?.train
-  const [selectedClass, setSelectedClass] = useState(travelClasses[0])
-  const [selectedCoach, setSelectedCoach] = useState(travelClasses[0].coaches[0])
-  const [selectedSeats, setSelectedSeats] = useState([])
+  const search = selection?.search
 
-  const total = useMemo(
-    () => selectedSeats.length * selectedClass.fare,
-    [selectedClass.fare, selectedSeats.length],
+  const journeyDate = train?.journeyDate ?? search?.date
+  const sourceStation = train?.from?.code ?? search?.from
+  const destinationStation = train?.to?.code ?? search?.to
+  const trainId = train?.trainNo
+
+  const [selectedClass, setSelectedClass] = useState(TRAVEL_CLASSES[0])
+  const [selectedCoach, setSelectedCoach] = useState(null)
+  const [seatCount, setSeatCount] = useState(1)
+  const [classCache, setClassCache] = useState({})
+
+  const canQuery = Boolean(
+    trainId && journeyDate && sourceStation && destinationStation && selectedClass?.code,
   )
+
+  const {
+    data: availability,
+    isFetching,
+    isError,
+    error,
+    isSuccess,
+  } = useQuery({
+    queryKey: [
+      'seat-availability',
+      trainId,
+      journeyDate,
+      sourceStation,
+      destinationStation,
+      selectedClass.code,
+    ],
+    queryFn: () =>
+      getSeatAvailability({
+        trainId,
+        journeyDate,
+        sourceStation,
+        destinationStation,
+        classCode: selectedClass.code,
+      }),
+    enabled: canQuery,
+    retry: false,
+    staleTime: 30_000,
+  })
+
+  useEffect(() => {
+    if (!isSuccess || !availability) return
+
+    setClassCache((current) => ({
+      ...current,
+      [selectedClass.code]: availability,
+    }))
+    setSelectedCoach(null)
+    setSeatCount(1)
+  }, [availability, isSuccess, selectedClass.code])
+
+  useEffect(() => {
+    if (!isError) return
+
+    const message = error?.message ?? ''
+    const notOffered =
+      /not available on train/i.test(message) || /CLASS_NOT_AVAILABLE/i.test(message)
+
+    setClassCache((current) => ({
+      ...current,
+      [selectedClass.code]: {
+        notOffered: true,
+        availableSeats: 0,
+        totalSeats: 0,
+        coaches: [],
+        status: 'NOT_AVAILABLE',
+        message,
+      },
+    }))
+    setSelectedCoach(null)
+  }, [isError, error, selectedClass.code])
+
+  const coaches = useMemo(() => {
+    const list = availability?.coaches ?? []
+    return [...list].sort((a, b) => (a.positionSeq ?? 0) - (b.positionSeq ?? 0))
+  }, [availability])
+
+  const maxSeats = selectedCoach?.availableSeats ?? 0
+
+  useEffect(() => {
+    if (seatCount > maxSeats && maxSeats > 0) {
+      setSeatCount(maxSeats)
+    }
+  }, [maxSeats, seatCount])
 
   if (!train) {
     return (
@@ -180,7 +260,7 @@ export default function SeatSelectionPage() {
             Select a train first
           </h1>
           <p className="mt-2 text-sm text-slate">
-            Search a route and choose a train to explore its coaches.
+            Search a route and choose a train to check live seat availability.
           </p>
           <Button className="mt-6 w-full" onClick={() => navigate('/home')}>
             Back to train search
@@ -190,36 +270,47 @@ export default function SeatSelectionPage() {
     )
   }
 
-  const changeClass = (travelClass) => {
-    setSelectedClass(travelClass)
-    setSelectedCoach(travelClass.coaches[0])
-    setSelectedSeats([])
-  }
-
-  const changeCoach = (coach) => {
-    setSelectedCoach(coach)
-    setSelectedSeats([])
-  }
-
-  const toggleSeat = (seat) => {
-    setSelectedSeats((current) => {
-      const exists = current.some((selected) => selected.id === seat.id)
-      if (exists) return current.filter((selected) => selected.id !== seat.id)
-      if (current.length >= 6) {
-        toast.error('You can select up to 6 seats')
-        return current
-      }
-      return [...current, seat]
-    })
-  }
-
   const continueBooking = () => {
-    if (selectedSeats.length === 0) {
-      toast.error('Select at least one seat to continue')
+    if (!selectedCoach) {
+      toast.error('Select a coach with available seats')
       return
     }
-    toast.success(`${selectedSeats.length} seat${selectedSeats.length > 1 ? 's' : ''} reserved`)
+    if (seatCount < 1) {
+      toast.error('Choose at least 1 seat')
+      return
+    }
+
+    const payload = {
+      train,
+      search: {
+        from: sourceStation,
+        to: destinationStation,
+        date: journeyDate,
+      },
+      availability: {
+        classCode: selectedClass.code,
+        className: selectedClass.name,
+        coach: selectedCoach,
+        seatCount,
+        snapshot: availability,
+      },
+    }
+
+    sessionStorage.setItem('seatHoldDraft', JSON.stringify(payload))
+    navigate('/booking/hold', { state: payload })
   }
+
+  const activeCache = classCache[selectedClass.code]
+  const classNotOfferedMessage =
+    /not available on train/i.test(error?.message ?? '') ||
+    /CLASS_NOT_AVAILABLE/i.test(error?.message ?? '')
+  const showNotOffered =
+    !isFetching && (Boolean(activeCache?.notOffered) || (isError && classNotOfferedMessage))
+  const showEmpty =
+    !isFetching &&
+    !isError &&
+    availability &&
+    (availability.status === 'NOT_AVAILABLE' || coaches.length === 0)
 
   return (
     <main className="flex min-h-dvh flex-col bg-sky-mist text-charcoal">
@@ -238,7 +329,7 @@ export default function SeatSelectionPage() {
                 Back to results
               </span>
               <span className="truncate font-heading text-base font-bold text-charcoal sm:text-lg">
-                Choose your space
+                Check availability
               </span>
             </span>
           </button>
@@ -260,7 +351,7 @@ export default function SeatSelectionPage() {
                   Train {train.trainNo}
                 </span>
                 <span className="rounded-full border border-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white/70">
-                  {train.journeyDate}
+                  {journeyDate}
                 </span>
               </div>
               <h1 className="font-heading text-2xl font-bold text-white sm:text-3xl md:text-4xl">
@@ -271,8 +362,10 @@ export default function SeatSelectionPage() {
             <div className="flex w-full min-w-0 items-center gap-3 sm:gap-4 lg:max-w-xl lg:shrink-0">
               <div className="flex min-w-0 flex-1 flex-col">
                 <p className="text-xl font-black sm:text-2xl">{formatTime(train.from?.departureTime)}</p>
-                <p className="mt-1 text-sm font-bold text-secondary">{train.from?.code}</p>
-                <p className="truncate text-xs text-white/60">{formatStationName(train.from?.name)}</p>
+                <p className="mt-1 text-sm font-bold text-secondary">{sourceStation}</p>
+                <p className="truncate text-xs text-white/60">
+                  {formatStationName(train.from?.name)}
+                </p>
               </div>
               <div className="flex min-w-16 shrink-0 flex-col items-center sm:min-w-24">
                 <span className="text-[11px] font-bold text-white/70 sm:text-xs">{train.duration}</span>
@@ -287,8 +380,10 @@ export default function SeatSelectionPage() {
               </div>
               <div className="flex min-w-0 flex-1 flex-col items-end text-right">
                 <p className="text-xl font-black sm:text-2xl">{formatTime(train.to?.arrivalTime)}</p>
-                <p className="mt-1 text-sm font-bold text-secondary">{train.to?.code}</p>
-                <p className="truncate text-xs text-white/60">{formatStationName(train.to?.name)}</p>
+                <p className="mt-1 text-sm font-bold text-secondary">{destinationStation}</p>
+                <p className="truncate text-xs text-white/60">
+                  {formatStationName(train.to?.name)}
+                </p>
               </div>
             </div>
           </div>
@@ -308,99 +403,82 @@ export default function SeatSelectionPage() {
                 </h2>
               </div>
               <span className="rounded-full bg-sky-soft px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-deep">
-                Demo availability
+                Live availability
               </span>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {travelClasses.map((travelClass) => {
-                const active = selectedClass.code === travelClass.code
-                return (
-                  <button
-                    key={travelClass.code}
-                    type="button"
-                    onClick={() => changeClass(travelClass)}
-                    className={`flex flex-col rounded-2xl border-2 p-4 text-left transition ${
-                      active
-                        ? 'border-charcoal bg-charcoal text-white shadow-card'
-                        : 'border-line bg-white hover:border-primary-deep'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex flex-col">
-                        <p className={`text-xs font-bold ${active ? 'text-secondary' : 'text-primary-deep'}`}>
-                          {travelClass.code}
-                        </p>
-                        <p className="mt-1 font-bold">{travelClass.name}</p>
-                      </div>
-                      {active ? <span className="text-secondary">✓</span> : null}
-                    </div>
-                    <div className="mt-4 flex items-end justify-between gap-2">
-                      <span className={`flex flex-col text-xs font-semibold ${active ? 'text-white' : 'text-slate'}`}>
-                        <span>{travelClass.available} available</span>
-                        <span className="mt-0.5">
-                          {travelClass.capacity} berths / coach
-                        </span>
-                      </span>
-                      <span className="text-lg font-black">₹{travelClass.fare}</span>
-                    </div>
-                  </button>
-                )
-              })}
+
+            <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 md:grid-cols-3 xl:grid-cols-4">
+              {TRAVEL_CLASSES.map((travelClass) => (
+                <ClassCard
+                  key={travelClass.code}
+                  travelClass={travelClass}
+                  active={selectedClass.code === travelClass.code}
+                  availability={classCache[travelClass.code]}
+                  loading={selectedClass.code === travelClass.code && isFetching}
+                  onSelect={setSelectedClass}
+                />
+              ))}
             </div>
           </section>
 
           <section className="flex flex-col rounded-3xl border-2 border-line bg-white p-4 shadow-sm sm:p-6">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div className="flex flex-col">
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-primary-deep">
                   Step 2
                 </p>
                 <h2 className="font-heading text-xl font-bold text-charcoal sm:text-2xl">
-                  Walk through the coach
+                  Choose a coach
                 </h2>
                 <p className="mt-1 text-sm text-slate">
-                  Choose a coach, then tap the berth that feels right.
+                  Availability is for {sourceStation} → {destinationStation} on {journeyDate}.
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {selectedClass.coaches.map((coach) => (
-                  <button
-                    key={coach}
-                    type="button"
-                    onClick={() => changeCoach(coach)}
-                    className={`rounded-full px-4 py-2 text-sm font-extrabold transition ${
-                      selectedCoach === coach
-                        ? 'bg-aqua-gradient text-charcoal shadow-glow'
-                        : 'bg-sky-soft text-slate hover:bg-sky'
-                    }`}
-                  >
-                    {coach}
-                  </button>
-                ))}
-              </div>
+              {availability && !showNotOffered ? (
+                <div className="rounded-2xl bg-sky-mist px-4 py-2 text-sm font-semibold text-charcoal">
+                  <span className="font-extrabold text-primary-deep">
+                    {availability.availableSeats ?? 0}
+                  </span>{' '}
+                  free of {availability.totalSeats ?? 0} in {selectedClass.code}
+                </div>
+              ) : null}
             </div>
 
-            <div className="my-5 flex flex-wrap gap-3 text-xs font-semibold text-slate sm:gap-4">
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded border-2 border-line bg-[#E8FBFF]" /> Available
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded bg-charcoal" /> Selected
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded border border-[#F3B4D0] bg-[#FFF0F7]" /> Ladies
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded bg-[#EEF4F7]" /> Unavailable
-              </span>
+            <div className="mt-5">
+              {isFetching ? (
+                <CoachGridSkeleton count={4} />
+              ) : showNotOffered ? (
+                <div className="rounded-2xl border-2 border-line bg-sky-mist px-4 py-10 text-center">
+                  <p className="font-heading text-lg font-bold text-charcoal">
+                    {selectedClass.code} is not offered on this train
+                  </p>
+                  <p className="mt-2 text-sm text-slate">Try another travel class above.</p>
+                </div>
+              ) : isError ? (
+                <div className="rounded-2xl border-2 border-[#F3B4B4] bg-[#FFF5F5] px-4 py-8 text-center">
+                  <p className="font-heading text-lg font-bold text-charcoal">Couldn’t load seats</p>
+                  <p className="mt-2 text-sm text-slate">{error.message}</p>
+                </div>
+              ) : showEmpty ? (
+                <div className="rounded-2xl border-2 border-line bg-sky-mist px-4 py-10 text-center">
+                  <p className="font-heading text-lg font-bold text-charcoal">No seats available</p>
+                  <p className="mt-2 text-sm text-slate">
+                    {availability?.message || `All ${selectedClass.code} coaches are full for this segment.`}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {coaches.map((coach) => (
+                    <CoachCard
+                      key={coach.coachId ?? coach.coachNumber}
+                      coach={coach}
+                      selected={selectedCoach?.coachNumber === coach.coachNumber}
+                      onSelect={setSelectedCoach}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-
-            <CoachMap
-              coach={selectedCoach}
-              travelClass={selectedClass}
-              selectedSeats={selectedSeats}
-              onSelect={toggleSeat}
-            />
           </section>
         </div>
 
@@ -414,60 +492,69 @@ export default function SeatSelectionPage() {
             </div>
             <div className="flex flex-col p-5">
               <div className="flex items-center justify-between border-b-2 border-line pb-4">
-                <span className="text-sm text-slate">Class · Coach</span>
+                <span className="text-sm text-slate">Class</span>
                 <span className="text-sm font-extrabold text-charcoal">
-                  {selectedClass.code} · {selectedCoach}
+                  {selectedClass.code} · {selectedClass.name}
                 </span>
               </div>
 
-              <div className="py-4">
+              <div className="border-b-2 border-line py-4">
                 <p className="text-xs font-bold uppercase tracking-wider text-primary-deep">
-                  Selected berths
+                  Selected coach
                 </p>
-                {selectedSeats.length === 0 ? (
-                  <div className="mt-3 rounded-2xl border-2 border-dashed border-line bg-sky-mist p-4 text-center">
-                    <p className="text-sm font-semibold text-slate">Your seats will appear here</p>
-                    <p className="mt-1 text-xs text-slate">Tap any aqua berth in the coach</p>
+                {selectedCoach ? (
+                  <div className="mt-3 rounded-2xl bg-sky-soft px-4 py-3">
+                    <p className="text-lg font-extrabold text-charcoal">{selectedCoach.coachNumber}</p>
+                    <p className="mt-1 text-xs font-semibold text-slate">
+                      {selectedCoach.availableSeats} seats available
+                    </p>
                   </div>
                 ) : (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {selectedSeats.map((seat) => (
-                      <button
-                        key={seat.id}
-                        type="button"
-                        onClick={() => toggleSeat(seat)}
-                        className="rounded-xl bg-sky-soft px-3 py-2 text-left text-xs text-charcoal"
-                      >
-                        <span className="block font-extrabold">{seat.id}</span>
-                        <span>{seat.berth} · ×</span>
-                      </button>
-                    ))}
+                  <div className="mt-3 rounded-2xl border-2 border-dashed border-line bg-sky-mist p-4 text-center">
+                    <p className="text-sm font-semibold text-slate">Pick a coach with free seats</p>
                   </div>
                 )}
               </div>
 
-              <div className="border-t-2 border-line pt-4">
-                <div className="flex items-center justify-between text-sm text-slate">
-                  <span>Base fare × {selectedSeats.length}</span>
-                  <span>₹{total.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="mt-3 flex items-end justify-between">
-                  <span className="text-sm font-bold text-charcoal">Estimated total</span>
-                  <span className="text-3xl font-black text-charcoal">
-                    ₹{total.toLocaleString('en-IN')}
+              <div className="py-4">
+                <p className="text-xs font-bold uppercase tracking-wider text-primary-deep">
+                  How many seats?
+                </p>
+                <div className="mt-3 flex items-center gap-3">
+                  <button
+                    type="button"
+                    disabled={!selectedCoach || seatCount <= 1}
+                    onClick={() => setSeatCount((n) => Math.max(1, n - 1))}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-line bg-white text-lg font-bold disabled:opacity-40"
+                  >
+                    −
+                  </button>
+                  <span className="min-w-10 text-center text-2xl font-black text-charcoal">
+                    {seatCount}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!selectedCoach || seatCount >= maxSeats}
+                    onClick={() => setSeatCount((n) => Math.min(maxSeats, n + 1))}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-line bg-white text-lg font-bold disabled:opacity-40"
+                  >
+                    +
+                  </button>
+                  <span className="text-xs font-semibold text-slate">
+                    max {maxSeats || 0}
                   </span>
                 </div>
               </div>
 
               <Button
-                className="mt-5 w-full py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-2 w-full py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={continueBooking}
-                disabled={selectedSeats.length === 0}
+                disabled={!selectedCoach || seatCount < 1}
               >
-                Continue with {selectedSeats.length || 0} seat{selectedSeats.length === 1 ? '' : 's'}
+                Continue with {seatCount} seat{seatCount === 1 ? '' : 's'}
               </Button>
               <p className="mt-3 text-center text-[10px] leading-relaxed text-slate">
-                No payment yet. Availability is rechecked before booking.
+                Next step: passenger details & seat hold. Availability is rechecked before booking.
               </p>
             </div>
           </div>
@@ -478,17 +565,34 @@ export default function SeatSelectionPage() {
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-bold uppercase tracking-wider text-primary-deep">
-              {selectedClass.code} · {selectedCoach}
-              {selectedSeats.length > 0 ? ` · ${selectedSeats.length} seat${selectedSeats.length === 1 ? '' : 's'}` : ''}
+              {selectedClass.code}
+              {selectedCoach ? ` · ${selectedCoach.coachNumber}` : ''}
+              {selectedCoach ? ` · ${seatCount} seat${seatCount === 1 ? '' : 's'}` : ''}
             </p>
-            <p className="text-xl font-black text-charcoal">
-              ₹{total.toLocaleString('en-IN')}
-            </p>
+            <div className="mt-1 flex items-center gap-2">
+              <button
+                type="button"
+                disabled={!selectedCoach || seatCount <= 1}
+                onClick={() => setSeatCount((n) => Math.max(1, n - 1))}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-sm font-bold disabled:opacity-40"
+              >
+                −
+              </button>
+              <span className="text-lg font-black text-charcoal">{seatCount}</span>
+              <button
+                type="button"
+                disabled={!selectedCoach || seatCount >= maxSeats}
+                onClick={() => setSeatCount((n) => Math.min(maxSeats, n + 1))}
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-line text-sm font-bold disabled:opacity-40"
+              >
+                +
+              </button>
+            </div>
           </div>
           <Button
             className="shrink-0 px-5 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             onClick={continueBooking}
-            disabled={selectedSeats.length === 0}
+            disabled={!selectedCoach || seatCount < 1}
           >
             Continue
           </Button>

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getTrainRoute, normalizeRouteStops } from '../../../api/trains'
 import Button from '../../../components/ui/Button'
+import { RouteStopsSkeleton } from '../../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
@@ -136,10 +137,7 @@ export default function TrainRouteDialog({
 
         <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4">
           {isFetching ? (
-            <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-              <span className="h-10 w-10 animate-spin rounded-full border-4 border-sky-soft border-t-primary-deep" />
-              <p className="text-sm font-semibold text-slate">Fetching every halt on this route…</p>
-            </div>
+            <RouteStopsSkeleton count={7} />
           ) : isError ? (
             <div className="rounded-2xl border-2 border-red-200 bg-red-50 px-4 py-8 text-center">
               <p className="text-sm font-bold text-red-700">{error.message}</p>

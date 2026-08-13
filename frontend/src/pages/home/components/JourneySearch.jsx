@@ -6,6 +6,7 @@ import { formatJourneyDate, searchTrains } from '../../../api/trains'
 import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
 import StationSelect from '../../../components/ui/StationSelect'
+import { TrainResultsSkeleton } from '../../../components/ui/Skeleton'
 import TextInput from '../../../components/ui/TextInput'
 import { LineIcon } from './HomeIcons'
 import TrainResults from './TrainResults'
@@ -79,14 +80,14 @@ export default function JourneySearch() {
             icon={<LineIcon type="pin" className="h-4 w-4" />}
             value={origin}
             onChange={setOrigin}
-            placeholder="Search station"
+            placeholder="City, station or code"
           />
           <StationSelect
             label="To"
             icon={<LineIcon type="swap" className="h-4 w-4" />}
             value={destination}
             onChange={setDestination}
-            placeholder="Search station"
+            placeholder="City, station or code"
           />
           <DatePickerField
             label="Date"
@@ -110,7 +111,10 @@ export default function JourneySearch() {
           {searchMutation.isPending ? 'Searching...' : 'Search Trains'}
         </Button>
 
-        {searchMutation.data ? <TrainResults result={searchMutation.data} /> : null}
+        {searchMutation.isPending ? <TrainResultsSkeleton count={3} /> : null}
+        {!searchMutation.isPending && searchMutation.data ? (
+          <TrainResults result={searchMutation.data} />
+        ) : null}
       </div>
     </section>
   )
