@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import BookingDetailsPage from './pages/booking/BookingDetailsPage'
 import CancelBookingPage from './pages/booking/CancelBookingPage'
+import ConfirmHoldPage from './pages/booking/ConfirmHoldPage'
 import MyBookingsPage from './pages/booking/MyBookingsPage'
 import PassengerHoldPage from './pages/booking/PassengerHoldPage'
 import PaymentOrderPage from './pages/booking/PaymentOrderPage'
@@ -57,6 +58,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PassengerHoldPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/confirm"
+            element={
+              <ProtectedRoute>
+                <ConfirmHoldPage />
               </ProtectedRoute>
             }
           />

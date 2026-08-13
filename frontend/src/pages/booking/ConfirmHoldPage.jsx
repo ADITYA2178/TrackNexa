@@ -7,7 +7,6 @@ import {
   confirmSeatHold,
   getStoredActiveHold,
   getStoredAuthUser,
-  storeActiveHold,
 } from '../../api/bookings'
 import { storeConfirmedBooking } from '../../api/payments'
 import Button from '../../components/ui/Button'
@@ -56,6 +55,14 @@ function useHoldCountdown(heldUntil) {
   }, [heldUntil, now])
 }
 
+function resolveHoldSummary(holdId, holdFromState, storedHold) {
+  const id = String(holdId || '').trim()
+  if (!id) return null
+  if (holdFromState?.holdId === id) return holdFromState
+  if (storedHold?.holdId === id) return storedHold
+  return null
+}
+
 export default function ConfirmHoldPage() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -70,20 +77,7 @@ export default function ConfirmHoldPage() {
   const [acknowledged, setAcknowledged] = useState(false)
   const [result, setResult] = useState(null)
 
-  const hold =
-    holdFromState ||
-    (storedHold?.holdId && storedHold.holdId === holdIdInput.trim() ? storedHold : null) ||
-    (storedHold?.holdId === holdIdInput.trim() ? storedHold : null)
-
-  const activeHold =
-    hold && hold.holdId === holdIdInput.trim()
-      ? hold
-      : holdFromState?.holdId === holdIdInput.trim()
-        ? holdFromState
-        : storedHold?.holdId === holdIdInput.trim()
-          ? storedHold
-          : null
-
+  const activeHold = resolveHoldSummary(holdIdInput, holdFromState, storedHold)
   const countdown = useHoldCountdown(activeHold?.heldUntil)
 
   const confirmMutation = useMutation({
@@ -296,8 +290,8 @@ export default function ConfirmHoldPage() {
               Issue PNR from hold
             </h1>
             <p className="mt-2 text-sm text-white/70">
-              Uses <span className="font-semibold text-white">/api/bookings/confirm</span>. Prefer
-              the payment flow in production; this is for demo / offline confirmation.
+              Uses /api/bookings/confirm. Prefer the payment flow in production; this is for demo /
+              offline confirmation.
             </p>
           </div>
           {countdown ? (
@@ -410,7 +404,9 @@ export default function ConfirmHoldPage() {
           </Button>
           <Button
             className="w-full py-3.5 sm:flex-1 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!holdIdInput.trim() || !acknowledged || confirmMutation.isPending || countdown?.expired}
+            disabled={
+              !holdIdInput.trim() || !acknowledged || confirmMutation.isPending || countdown?.expired
+            }
             onClick={handleConfirm}
           >
             {confirmMutation.isPending ? 'Confirming…' : 'Confirm hold & get PNR'}
@@ -420,6 +416,3 @@ export default function ConfirmHoldPage() {
     </main>
   )
 }
-
-// Keep store helper import used for potential future draft sync
-void storeActiveHold

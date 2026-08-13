@@ -274,6 +274,13 @@ export default function PassengerHoldPage() {
             <Button
               variant="ghost"
               className="w-full border-2 border-line py-3.5 sm:flex-1"
+              onClick={() => navigate('/booking/confirm', { state: { hold: holdResult } })}
+            >
+              Confirm without payment
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full border-2 border-line py-3.5 sm:flex-1"
               onClick={() => navigate('/home')}
             >
               Back to home

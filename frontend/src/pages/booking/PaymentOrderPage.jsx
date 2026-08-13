@@ -342,6 +342,13 @@ export default function PaymentOrderPage() {
               >
                 {orderMutation.isPending ? 'Refreshing…' : 'Refresh order'}
               </Button>
+              <button
+                type="button"
+                className="text-center text-[11px] font-semibold text-primary-deep underline-offset-2 hover:underline"
+                onClick={() => navigate('/booking/confirm', { state: { hold } })}
+              >
+                Confirm hold without payment
+              </button>
               <p className="text-center text-[10px] leading-relaxed text-slate">
                 Creating an order does not confirm the booking. Verification happens after payment.
               </p>
