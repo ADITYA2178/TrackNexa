@@ -112,6 +112,24 @@ export async function cancelBooking({ pnr, userId = null, reason = 'USER_REQUEST
   return data
 }
 
+export async function getBookingsByUser(userId, { status = null, journey = null } = {}) {
+  const params = new URLSearchParams()
+  if (status) params.set('status', status)
+  if (journey) params.set('journey', journey)
+
+  const query = params.toString()
+  const path = `/api/bookings/user/${encodeURIComponent(userId)}${query ? `?${query}` : ''}`
+
+  const response = await fetch(buildApiUrl(path))
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(data?.message ?? 'Unable to load your bookings')
+  }
+
+  return data
+}
+
 export const CANCEL_REASONS = [
   { value: 'USER_REQUESTED', label: 'Changed my plans' },
   { value: 'WRONG_TRAIN', label: 'Booked the wrong train' },

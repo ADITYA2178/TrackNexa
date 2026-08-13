@@ -35,7 +35,11 @@ export default function HomeScreen() {
               label="PNR Status"
               onClick={() => navigate('/booking/pnr')}
             />
-            <ShortcutCard icon="bell" label="Saved Routes" />
+            <ShortcutCard
+              icon="bell"
+              label="My Bookings"
+              onClick={() => navigate('/booking/my')}
+            />
           </section>
         </div>
 
