@@ -55,7 +55,13 @@ export default function Login() {
     },
     onSuccess: (data) => {
       const authToken = data?.token ?? data?.accessToken ?? data?.data?.token ?? 'authenticated'
+      const authUser = data?.user ?? data?.data?.user ?? null
       localStorage.setItem('authToken', authToken)
+      if (authUser) {
+        localStorage.setItem('authUser', JSON.stringify(authUser))
+      } else {
+        localStorage.removeItem('authUser')
+      }
       toast.success(data?.message ?? 'Logged in successfully')
       navigate('/home')
     },

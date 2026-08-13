@@ -295,9 +295,7 @@ export default function SeatSelectionPage() {
     }
 
     sessionStorage.setItem('seatHoldDraft', JSON.stringify(payload))
-    toast.success(
-      `${seatCount} seat${seatCount > 1 ? 's' : ''} ready in coach ${selectedCoach.coachNumber}`,
-    )
+    navigate('/booking/hold', { state: payload })
   }
 
   const activeCache = classCache[selectedClass.code]
