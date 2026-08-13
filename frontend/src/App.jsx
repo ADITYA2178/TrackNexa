@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import PassengerHoldPage from './pages/booking/PassengerHoldPage'
 import PaymentOrderPage from './pages/booking/PaymentOrderPage'
 import PaymentVerifyPage from './pages/booking/PaymentVerifyPage'
+import BookingDetailsPage from './pages/booking/BookingDetailsPage'
 import SeatSelectionPage from './pages/booking/SeatSelectionPage'
 import TicketPage from './pages/booking/TicketPage'
 import HomePage from './pages/home/HomePage'
@@ -85,6 +86,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <TicketPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/pnr/:pnr"
+            element={
+              <ProtectedRoute>
+                <BookingDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/pnr"
+            element={
+              <ProtectedRoute>
+                <BookingDetailsPage />
               </ProtectedRoute>
             }
           />

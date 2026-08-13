@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import HomeHeader from './components/HomeHeader'
 import JourneySearch from './components/JourneySearch'
 import LiveUpdates from './components/LiveUpdates'
@@ -6,6 +7,8 @@ import StatCard from './components/StatCard'
 import TripSummary from './components/TripSummary'
 
 export default function HomeScreen() {
+  const navigate = useNavigate()
+
   return (
     <section className="flex min-h-dvh flex-col bg-sky-mist">
       <HomeHeader />
@@ -21,9 +24,17 @@ export default function HomeScreen() {
           </section>
 
           <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-            <ShortcutCard icon="ticket" label="Book Tickets" />
+            <ShortcutCard
+              icon="ticket"
+              label="Book Tickets"
+              onClick={() => document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })}
+            />
             <ShortcutCard icon="pin" label="Live Tracking" />
-            <ShortcutCard icon="book" label="PNR Status" />
+            <ShortcutCard
+              icon="book"
+              label="PNR Status"
+              onClick={() => navigate('/booking/pnr')}
+            />
             <ShortcutCard icon="bell" label="Saved Routes" />
           </section>
         </div>

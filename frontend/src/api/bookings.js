@@ -77,6 +77,19 @@ export async function getTicketByPnr(pnr) {
   return data
 }
 
+export async function getBookingByPnr(pnr) {
+  const response = await fetch(
+    buildApiUrl(`/api/bookings/${encodeURIComponent(pnr)}`),
+  )
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(data?.message ?? 'Unable to load booking details')
+  }
+
+  return data
+}
+
 export async function downloadTicketPdf(pnr) {
   const response = await fetch(
     buildApiUrl(`/api/bookings/${encodeURIComponent(pnr)}/ticket?format=pdf`),
