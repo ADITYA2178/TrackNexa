@@ -267,7 +267,7 @@ export default function PassengerHoldPage() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
               className="w-full py-3.5 sm:flex-1"
-              onClick={() => toast('Payment comes next — API #3')}
+              onClick={() => navigate('/booking/payment', { state: { hold: holdResult } })}
             >
               Continue to payment
             </Button>

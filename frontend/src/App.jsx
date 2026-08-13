@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import PassengerHoldPage from './pages/booking/PassengerHoldPage'
+import PaymentOrderPage from './pages/booking/PaymentOrderPage'
 import SeatSelectionPage from './pages/booking/SeatSelectionPage'
 import HomePage from './pages/home/HomePage'
 import LoginPage from './pages/login/LoginPage'
@@ -50,6 +51,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <PassengerHoldPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/payment"
+            element={
+              <ProtectedRoute>
+                <PaymentOrderPage />
               </ProtectedRoute>
             }
           />
