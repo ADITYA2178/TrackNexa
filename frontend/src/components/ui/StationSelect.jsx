@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { searchStations } from '../../api/stations'
+import { resolveStationSuggestions } from '../../api/stations'
 
 function formatStationName(name = '') {
   return name
@@ -64,13 +64,19 @@ export default function StationSelect({
 
   const canSearch = open && debouncedQuery.length >= 2
   const { data, isFetching, isError, error } = useQuery({
-    queryKey: ['stations', 'search', debouncedQuery],
-    queryFn: () => searchStations(debouncedQuery, { limit: 10 }),
+    queryKey: ['stations', 'suggest', debouncedQuery],
+    queryFn: () => resolveStationSuggestions(debouncedQuery, { limit: 10 }),
     enabled: canSearch,
     staleTime: 60_000,
   })
 
   const stations = data?.stations ?? []
+  const hint =
+    data?.source === 'code'
+      ? 'Exact station code'
+      : data?.source === 'city'
+        ? 'Stations in this city'
+        : null
 
   const selectStation = (station) => {
     onChange(station)
@@ -133,36 +139,43 @@ export default function StationSelect({
           ) : stations.length === 0 ? (
             <p className="px-4 py-3 text-sm text-slate">No stations found</p>
           ) : (
-            <ul className="flex max-h-[min(16rem,50vh)] flex-col overflow-y-auto py-1">
-              {stations.map((station) => {
-                const isSelected = value?.station_code === station.station_code
+            <>
+              {hint ? (
+                <p className="border-b border-line px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate">
+                  {hint}
+                </p>
+              ) : null}
+              <ul className="flex max-h-[min(16rem,50vh)] flex-col overflow-y-auto py-1">
+                {stations.map((station) => {
+                  const isSelected = value?.station_code === station.station_code
 
-                return (
-                  <li key={station.station_code}>
-                    <button
-                      type="button"
-                      onMouseDown={(event) => event.preventDefault()}
-                      onClick={() => selectStation(station)}
-                      className={`flex w-full items-start justify-between gap-3 px-4 py-2.5 text-left hover:bg-sky-soft ${
-                        isSelected ? 'bg-sky-soft' : ''
-                      }`}
-                    >
-                      <span className="flex min-w-0 flex-col">
-                        <span className="truncate text-sm font-semibold text-charcoal">
-                          {formatStationName(station.station_name)}
+                  return (
+                    <li key={station.station_code}>
+                      <button
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => selectStation(station)}
+                        className={`flex w-full items-start justify-between gap-3 px-4 py-2.5 text-left hover:bg-sky-soft ${
+                          isSelected ? 'bg-sky-soft' : ''
+                        }`}
+                      >
+                        <span className="flex min-w-0 flex-col">
+                          <span className="truncate text-sm font-semibold text-charcoal">
+                            {formatStationName(station.station_name)}
+                          </span>
+                          <span className="mt-0.5 truncate text-xs text-slate">
+                            {formatStationName(station.city)}
+                          </span>
                         </span>
-                        <span className="mt-0.5 truncate text-xs text-slate">
-                          {formatStationName(station.city)}
+                        <span className="shrink-0 rounded-full bg-charcoal px-2 py-0.5 text-xs font-bold tracking-wide text-white">
+                          {station.station_code}
                         </span>
-                      </span>
-                      <span className="shrink-0 rounded-full bg-charcoal px-2 py-0.5 text-xs font-bold tracking-wide text-white">
-                        {station.station_code}
-                      </span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </>
           )}
         </div>
       ) : null}

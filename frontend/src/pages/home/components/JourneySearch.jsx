@@ -79,14 +79,14 @@ export default function JourneySearch() {
             icon={<LineIcon type="pin" className="h-4 w-4" />}
             value={origin}
             onChange={setOrigin}
-            placeholder="Search station"
+            placeholder="City, station or code"
           />
           <StationSelect
             label="To"
             icon={<LineIcon type="swap" className="h-4 w-4" />}
             value={destination}
             onChange={setDestination}
-            placeholder="Search station"
+            placeholder="City, station or code"
           />
           <DatePickerField
             label="Date"
