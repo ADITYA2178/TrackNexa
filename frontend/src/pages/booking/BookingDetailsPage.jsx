@@ -333,7 +333,7 @@ export default function BookingDetailsPage() {
                 <Button
                   variant="ghost"
                   className="w-full border-2 border-line py-3.5 sm:flex-1"
-                  onClick={() => toast('Cancel booking comes next — API #7')}
+                  onClick={() => navigate(`/booking/cancel/${booking.pnr}`)}
                 >
                   Cancel booking
                 </Button>

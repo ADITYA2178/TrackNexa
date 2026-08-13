@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import BookingDetailsPage from './pages/booking/BookingDetailsPage'
+import CancelBookingPage from './pages/booking/CancelBookingPage'
 import PassengerHoldPage from './pages/booking/PassengerHoldPage'
 import PaymentOrderPage from './pages/booking/PaymentOrderPage'
 import PaymentVerifyPage from './pages/booking/PaymentVerifyPage'
-import BookingDetailsPage from './pages/booking/BookingDetailsPage'
 import SeatSelectionPage from './pages/booking/SeatSelectionPage'
 import TicketPage from './pages/booking/TicketPage'
 import HomePage from './pages/home/HomePage'
@@ -102,6 +103,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <BookingDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/cancel/:pnr"
+            element={
+              <ProtectedRoute>
+                <CancelBookingPage />
               </ProtectedRoute>
             }
           />
