@@ -5,6 +5,7 @@ import PassengerHoldPage from './pages/booking/PassengerHoldPage'
 import PaymentOrderPage from './pages/booking/PaymentOrderPage'
 import PaymentVerifyPage from './pages/booking/PaymentVerifyPage'
 import SeatSelectionPage from './pages/booking/SeatSelectionPage'
+import TicketPage from './pages/booking/TicketPage'
 import HomePage from './pages/home/HomePage'
 import LoginPage from './pages/login/LoginPage'
 import SignUpPage from './pages/signup/SignUpPage'
@@ -68,6 +69,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <PaymentVerifyPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/ticket/:pnr"
+            element={
+              <ProtectedRoute>
+                <TicketPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/ticket"
+            element={
+              <ProtectedRoute>
+                <TicketPage />
               </ProtectedRoute>
             }
           />

@@ -217,7 +217,8 @@ export default function PaymentVerifyPage() {
           <div className="flex flex-col gap-3 sm:flex-row">
             <Button
               className="w-full py-3.5 sm:flex-1"
-              onClick={() => toast('Ticket view comes next — API #5')}
+              onClick={() => navigate(`/booking/ticket/${pnr}`)}
+              disabled={!pnr}
             >
               View ticket
             </Button>

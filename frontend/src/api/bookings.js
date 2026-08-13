@@ -63,3 +63,40 @@ export function getStoredActiveHold() {
     return null
   }
 }
+
+export async function getTicketByPnr(pnr) {
+  const response = await fetch(
+    buildApiUrl(`/api/bookings/${encodeURIComponent(pnr)}/ticket`),
+  )
+  const data = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    throw new Error(data?.message ?? 'Unable to load ticket')
+  }
+
+  return data
+}
+
+export async function downloadTicketPdf(pnr) {
+  const response = await fetch(
+    buildApiUrl(`/api/bookings/${encodeURIComponent(pnr)}/ticket?format=pdf`),
+    {
+      headers: {
+        Accept: 'application/pdf',
+      },
+    },
+  )
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new Error(data?.message ?? 'Unable to download ticket PDF')
+  }
+
+  const blob = await response.blob()
+  const disposition = response.headers.get('Content-Disposition') || ''
+  const match = disposition.match(/filename="?([^"]+)"?/i)
+  const filename = match?.[1] || `TrackNexa-Ticket-${pnr}.pdf`
+
+  return { blob, filename }
+}
+
