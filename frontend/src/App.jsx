@@ -9,6 +9,7 @@ import PaymentOrderPage from './pages/booking/PaymentOrderPage'
 import PaymentVerifyPage from './pages/booking/PaymentVerifyPage'
 import SeatSelectionPage from './pages/booking/SeatSelectionPage'
 import TicketPage from './pages/booking/TicketPage'
+import TicketVerifyPage from './pages/booking/TicketVerifyPage'
 import HomePage from './pages/home/HomePage'
 import LoginPage from './pages/login/LoginPage'
 import SignUpPage from './pages/signup/SignUpPage'
@@ -120,6 +121,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyBookingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking/verify-ticket"
+            element={
+              <ProtectedRoute>
+                <TicketVerifyPage />
               </ProtectedRoute>
             }
           />

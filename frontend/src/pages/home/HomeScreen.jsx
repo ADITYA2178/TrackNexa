@@ -29,7 +29,11 @@ export default function HomeScreen() {
               label="Book Tickets"
               onClick={() => document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })}
             />
-            <ShortcutCard icon="pin" label="Live Tracking" />
+            <ShortcutCard
+              icon="pin"
+              label="Verify Ticket"
+              onClick={() => navigate('/booking/verify-ticket')}
+            />
             <ShortcutCard
               icon="book"
               label="PNR Status"

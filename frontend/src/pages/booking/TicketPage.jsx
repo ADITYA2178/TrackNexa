@@ -287,20 +287,33 @@ export default function TicketPage() {
               </div>
             </section>
 
-            <div className="flex flex-col gap-3 print:hidden sm:flex-row">
-              <Button className="w-full py-3.5 sm:flex-1" onClick={handleDownloadPdf}>
+            <div className="flex flex-col gap-3 print:hidden sm:flex-row sm:flex-wrap">
+              <Button className="w-full py-3.5 sm:min-w-[10rem] sm:flex-1" onClick={handleDownloadPdf}>
                 Download PDF
               </Button>
+              {ticket.qr?.payload ? (
+                <Button
+                  variant="ghost"
+                  className="w-full border-2 border-line py-3.5 sm:min-w-[10rem] sm:flex-1"
+                  onClick={() =>
+                    navigate('/booking/verify-ticket', {
+                      state: { qrPayload: ticket.qr.payload },
+                    })
+                  }
+                >
+                  Verify QR
+                </Button>
+              ) : null}
               <Button
                 variant="ghost"
-                className="w-full border-2 border-line py-3.5 sm:flex-1"
+                className="w-full border-2 border-line py-3.5 sm:min-w-[10rem] sm:flex-1"
                 onClick={() => navigate(`/booking/pnr/${pnr}`)}
               >
                 Booking details
               </Button>
               <Button
                 variant="ghost"
-                className="w-full border-2 border-line py-3.5 sm:flex-1"
+                className="w-full border-2 border-line py-3.5 sm:min-w-[10rem] sm:flex-1"
                 onClick={() => navigate('/home')}
               >
                 Home
