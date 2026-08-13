@@ -232,15 +232,15 @@ export default function SignUp() {
         </form>
       </div>
 
-      <div className="mt-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-white/35" />
-        <p className="whitespace-nowrap text-sm font-semibold text-white">
+      <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:items-center">
+        <div className="hidden h-px flex-1 bg-white/35 sm:block" />
+        <p className="text-center text-sm font-semibold text-white">
           Already have an account?{' '}
           <Link to="/login" className="font-bold text-white hover:text-secondary">
             Log In
           </Link>
         </p>
-        <div className="h-px flex-1 bg-white/35" />
+        <div className="hidden h-px flex-1 bg-white/35 sm:block" />
       </div>
     </>
   )

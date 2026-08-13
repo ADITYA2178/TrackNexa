@@ -68,7 +68,7 @@ export default function DatePickerField({ label, icon, value, onChange, classNam
       </button>
 
       {open ? (
-        <div className="absolute left-1/2 top-[calc(100%+0.5rem)] z-50 max-h-[420px] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto rounded-2xl border-2 border-line bg-white p-3 text-charcoal shadow-card sm:left-0 sm:translate-x-0">
+        <div className="absolute left-1/2 top-[calc(100%+0.5rem)] z-50 max-h-[min(420px,70dvh)] w-[min(20.5rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto rounded-2xl border-2 border-line bg-white p-3 text-charcoal shadow-card sm:left-0 sm:w-auto sm:translate-x-0">
           <DayPicker
             mode="single"
             selected={value}

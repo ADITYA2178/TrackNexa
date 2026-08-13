@@ -123,7 +123,7 @@ export default function StationSelect({
       </label>
 
       {open ? (
-        <div className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-50 overflow-hidden rounded-2xl border-2 border-line bg-white shadow-card">
+        <div className="absolute left-0 right-0 top-[calc(100%+0.4rem)] z-50 max-h-[min(16rem,50vh)] overflow-hidden rounded-2xl border-2 border-line bg-white shadow-card">
           {!canSearch ? (
             <p className="px-4 py-3 text-sm text-slate">Type at least 2 characters to search</p>
           ) : isFetching ? (
@@ -133,7 +133,7 @@ export default function StationSelect({
           ) : stations.length === 0 ? (
             <p className="px-4 py-3 text-sm text-slate">No stations found</p>
           ) : (
-            <ul className="flex max-h-64 flex-col overflow-y-auto py-1">
+            <ul className="flex max-h-[min(16rem,50vh)] flex-col overflow-y-auto py-1">
               {stations.map((station) => {
                 const isSelected = value?.station_code === station.station_code
 
@@ -147,11 +147,11 @@ export default function StationSelect({
                         isSelected ? 'bg-sky-soft' : ''
                       }`}
                     >
-                      <span className="flex flex-col">
-                        <span className="text-sm font-semibold text-charcoal">
+                      <span className="flex min-w-0 flex-col">
+                        <span className="truncate text-sm font-semibold text-charcoal">
                           {formatStationName(station.station_name)}
                         </span>
-                        <span className="mt-0.5 text-xs text-slate">
+                        <span className="mt-0.5 truncate text-xs text-slate">
                           {formatStationName(station.city)}
                         </span>
                       </span>

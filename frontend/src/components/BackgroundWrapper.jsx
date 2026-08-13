@@ -2,10 +2,11 @@ export default function BackgroundWrapper({
   children,
   contentClassName = 'max-w-[290px]',
   paddingClassName = 'p-4',
+  className = '',
 }) {
   return (
     <div
-      className={`relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-charcoal ${paddingClassName}`}
+      className={`relative flex min-h-dvh w-full items-center justify-center overflow-x-clip bg-charcoal ${paddingClassName} ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 z-0 bg-horizon-radial" />
       <div className="pointer-events-none absolute -left-24 top-10 z-0 h-72 w-72 rounded-full bg-secondary/30 blur-3xl" />

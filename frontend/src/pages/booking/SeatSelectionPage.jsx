@@ -76,12 +76,12 @@ function SeatIcon({ seat, selected, onSelect }) {
       disabled={unavailable}
       onClick={() => onSelect(seat)}
       aria-label={`Seat ${seat.number}, ${seat.berth}${unavailable ? ', unavailable' : ''}`}
-      className={`relative flex h-14 min-w-11 flex-1 flex-col items-center justify-center rounded-xl border-2 transition ${tone}`}
+      className={`relative flex h-12 min-w-9 flex-1 flex-col items-center justify-center rounded-lg border-2 transition sm:h-14 sm:min-w-11 sm:rounded-xl ${tone}`}
     >
-      <span className="text-sm font-extrabold">{seat.number}</span>
-      <span className="text-[9px] font-bold uppercase tracking-wide">{seat.berth.slice(0, 2)}</span>
+      <span className="text-xs font-extrabold sm:text-sm">{seat.number}</span>
+      <span className="text-[10px] font-bold uppercase tracking-wide">{seat.berth.slice(0, 2)}</span>
       <span
-        className={`absolute -right-0.5 top-2 h-7 w-1 rounded-l ${
+        className={`absolute -right-0.5 top-2 h-5 w-1 rounded-l sm:h-7 ${
           selected ? 'bg-secondary' : unavailable ? 'bg-[#D5E6EC]' : 'bg-current opacity-30'
         }`}
       />
@@ -104,16 +104,16 @@ function CoachMap({ coach, travelClass, selectedSeats, onSelect }) {
   }
 
   return (
-    <div className="overflow-x-auto pb-2">
-      <div className="flex min-w-[540px] flex-col rounded-[28px] border-2 border-line bg-white p-4">
-        <div className="mb-4 flex items-center justify-between rounded-2xl bg-charcoal px-4 py-3 text-white">
-          <div className="flex flex-col">
+    <div className="-mx-1 overflow-x-auto px-1 pb-2">
+      <div className="flex min-w-[min(100%,420px)] w-max max-w-none flex-col rounded-[22px] border-2 border-line bg-white p-3 sm:min-w-[540px] sm:rounded-[28px] sm:p-4">
+        <div className="mb-3 flex items-center justify-between gap-3 rounded-2xl bg-charcoal px-3 py-3 text-white sm:mb-4 sm:px-4">
+          <div className="flex min-w-0 flex-col">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
               You are inside
             </p>
-            <p className="text-lg font-bold">Coach {coach}</p>
+            <p className="text-base font-bold sm:text-lg">Coach {coach}</p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
+          <div className="flex shrink-0 items-center gap-2 text-[10px] font-semibold text-white/70 sm:text-xs">
             <span>← Entry</span>
             <span className="h-5 w-px bg-white/20" />
             <span>Washroom →</span>
@@ -126,8 +126,8 @@ function CoachMap({ coach, travelClass, selectedSeats, onSelect }) {
             const sideSeats = row.slice(travelClass.cabinSize)
 
             return (
-              <div key={`${coach}-row-${rowIndex}`} className="flex items-stretch gap-2">
-                <div className="flex flex-[3] gap-2">
+              <div key={`${coach}-row-${rowIndex}`} className="flex items-stretch gap-1.5 sm:gap-2">
+                <div className="flex flex-[3] gap-1.5 sm:gap-2">
                   {cabinSeats.map((seat) => (
                     <SeatIcon
                       key={seat.id}
@@ -137,8 +137,8 @@ function CoachMap({ coach, travelClass, selectedSeats, onSelect }) {
                     />
                   ))}
                 </div>
-                <div className="w-8 shrink-0 self-stretch rounded-full bg-white/70" />
-                <div className="flex flex-1 gap-2">
+                <div className="w-4 shrink-0 self-stretch rounded-full bg-sky-mist sm:w-8 sm:bg-white/70" />
+                <div className="flex flex-1 gap-1.5 sm:gap-2">
                   {sideSeats.map((seat) => (
                     <SeatIcon
                       key={seat.id}
@@ -173,10 +173,10 @@ export default function SeatSelectionPage() {
 
   if (!train) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-sky-mist p-6">
-        <div className="flex max-w-md flex-col items-center rounded-3xl border-2 border-line bg-white p-8 text-center shadow-card">
+      <main className="flex min-h-dvh items-center justify-center bg-sky-mist p-4 sm:p-6">
+        <div className="flex w-full max-w-md flex-col items-center rounded-3xl border-2 border-line bg-white p-6 text-center shadow-card sm:p-8">
           <TrachNexaLogo className="h-16 w-16 text-primary-deep" />
-          <h1 className="mt-4 font-heading text-3xl font-bold text-charcoal">
+          <h1 className="mt-4 font-heading text-2xl font-bold text-charcoal sm:text-3xl">
             Select a train first
           </h1>
           <p className="mt-2 text-sm text-slate">
@@ -222,28 +222,28 @@ export default function SeatSelectionPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col bg-sky-mist text-charcoal">
+    <main className="flex min-h-dvh flex-col bg-sky-mist text-charcoal">
       <header className="sticky top-0 z-50 border-b-2 border-line bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => navigate('/home')}
-            className="flex items-center gap-3 text-left"
+            className="flex min-w-0 items-center gap-3 text-left"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-sky-soft text-charcoal">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-sky-soft text-charcoal">
               ←
             </span>
-            <span className="flex flex-col">
+            <span className="flex min-w-0 flex-col">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary-deep">
                 Back to results
               </span>
-              <span className="font-heading text-lg font-bold text-charcoal">
+              <span className="truncate font-heading text-base font-bold text-charcoal sm:text-lg">
                 Choose your space
               </span>
             </span>
           </button>
-          <div className="flex items-center gap-2">
-            <TrachNexaLogo className="h-10 w-10 text-primary-deep" />
+          <div className="flex shrink-0 items-center gap-2">
+            <TrachNexaLogo className="h-9 w-9 text-primary-deep sm:h-10 sm:w-10" />
             <span className="hidden text-xs font-extrabold uppercase tracking-[0.2em] text-charcoal sm:block">
               Track Nexa
             </span>
@@ -252,9 +252,9 @@ export default function SeatSelectionPage() {
       </header>
 
       <section className="bg-charcoal text-white">
-        <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
-            <div className="flex flex-col">
+        <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-7 lg:px-8">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-center lg:gap-6">
+            <div className="flex min-w-0 flex-col">
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-aqua-gradient px-3 py-1 text-[10px] font-black uppercase tracking-widest text-charcoal">
                   Train {train.trainNo}
@@ -263,19 +263,19 @@ export default function SeatSelectionPage() {
                   {train.journeyDate}
                 </span>
               </div>
-              <h1 className="font-heading text-3xl font-bold text-white sm:text-4xl">
+              <h1 className="font-heading text-2xl font-bold text-white sm:text-3xl md:text-4xl">
                 {formatStationName(train.trainName)}
               </h1>
             </div>
 
-            <div className="flex items-center gap-4 lg:min-w-[520px]">
-              <div className="flex flex-1 flex-col">
-                <p className="text-2xl font-black">{formatTime(train.from?.departureTime)}</p>
+            <div className="flex w-full min-w-0 items-center gap-3 sm:gap-4 lg:max-w-xl lg:shrink-0">
+              <div className="flex min-w-0 flex-1 flex-col">
+                <p className="text-xl font-black sm:text-2xl">{formatTime(train.from?.departureTime)}</p>
                 <p className="mt-1 text-sm font-bold text-secondary">{train.from?.code}</p>
-                <p className="text-xs text-white/60">{formatStationName(train.from?.name)}</p>
+                <p className="truncate text-xs text-white/60">{formatStationName(train.from?.name)}</p>
               </div>
-              <div className="flex min-w-24 flex-col items-center">
-                <span className="text-xs font-bold text-white/70">{train.duration}</span>
+              <div className="flex min-w-16 shrink-0 flex-col items-center sm:min-w-24">
+                <span className="text-[11px] font-bold text-white/70 sm:text-xs">{train.duration}</span>
                 <div className="my-2 flex w-full items-center">
                   <span className="h-2 w-2 rounded-full border border-secondary" />
                   <span className="h-px flex-1 bg-secondary" />
@@ -285,25 +285,25 @@ export default function SeatSelectionPage() {
                   {train.distanceKm} km
                 </span>
               </div>
-              <div className="flex flex-1 flex-col items-end text-right">
-                <p className="text-2xl font-black">{formatTime(train.to?.arrivalTime)}</p>
+              <div className="flex min-w-0 flex-1 flex-col items-end text-right">
+                <p className="text-xl font-black sm:text-2xl">{formatTime(train.to?.arrivalTime)}</p>
                 <p className="mt-1 text-sm font-bold text-secondary">{train.to?.code}</p>
-                <p className="text-xs text-white/60">{formatStationName(train.to?.name)}</p>
+                <p className="truncate text-xs text-white/60">{formatStationName(train.to?.name)}</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 pb-28 sm:px-6 lg:flex-row lg:pb-8 lg:px-8">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <section className="flex flex-col">
-            <div className="mb-3 flex items-end justify-between gap-3">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
               <div className="flex flex-col">
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-primary-deep">
                   Step 1
                 </p>
-                <h2 className="font-heading text-2xl font-bold text-charcoal">
+                <h2 className="font-heading text-xl font-bold text-charcoal sm:text-2xl">
                   Pick your travel class
                 </h2>
               </div>
@@ -311,7 +311,7 @@ export default function SeatSelectionPage() {
                 Demo availability
               </span>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {travelClasses.map((travelClass) => {
                 const active = selectedClass.code === travelClass.code
                 return (
@@ -319,7 +319,7 @@ export default function SeatSelectionPage() {
                     key={travelClass.code}
                     type="button"
                     onClick={() => changeClass(travelClass)}
-                    className={`flex flex-1 flex-col rounded-2xl border-2 p-4 text-left transition ${
+                    className={`flex flex-col rounded-2xl border-2 p-4 text-left transition ${
                       active
                         ? 'border-charcoal bg-charcoal text-white shadow-card'
                         : 'border-line bg-white hover:border-primary-deep'
@@ -334,7 +334,7 @@ export default function SeatSelectionPage() {
                       </div>
                       {active ? <span className="text-secondary">✓</span> : null}
                     </div>
-                    <div className="mt-4 flex items-end justify-between">
+                    <div className="mt-4 flex items-end justify-between gap-2">
                       <span className={`flex flex-col text-xs font-semibold ${active ? 'text-white' : 'text-slate'}`}>
                         <span>{travelClass.available} available</span>
                         <span className="mt-0.5">
@@ -355,14 +355,14 @@ export default function SeatSelectionPage() {
                 <p className="text-[10px] font-black uppercase tracking-[0.22em] text-primary-deep">
                   Step 2
                 </p>
-                <h2 className="font-heading text-2xl font-bold text-charcoal">
+                <h2 className="font-heading text-xl font-bold text-charcoal sm:text-2xl">
                   Walk through the coach
                 </h2>
                 <p className="mt-1 text-sm text-slate">
                   Choose a coach, then tap the berth that feels right.
                 </p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {selectedClass.coaches.map((coach) => (
                   <button
                     key={coach}
@@ -380,7 +380,7 @@ export default function SeatSelectionPage() {
               </div>
             </div>
 
-            <div className="my-5 flex flex-wrap gap-4 text-xs font-semibold text-slate">
+            <div className="my-5 flex flex-wrap gap-3 text-xs font-semibold text-slate sm:gap-4">
               <span className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded border-2 border-line bg-[#E8FBFF]" /> Available
               </span>
@@ -404,7 +404,7 @@ export default function SeatSelectionPage() {
           </section>
         </div>
 
-        <aside className="flex w-full flex-col lg:w-[320px] lg:shrink-0 lg:self-start">
+        <aside className="hidden w-full flex-col lg:flex lg:w-[320px] lg:shrink-0 lg:self-start">
           <div className="overflow-hidden rounded-3xl border-2 border-line bg-white shadow-card">
             <div className="bg-charcoal p-5 text-white">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
@@ -472,6 +472,27 @@ export default function SeatSelectionPage() {
             </div>
           </div>
         </aside>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t-2 border-line bg-white/95 px-4 py-3 backdrop-blur lg:hidden pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-7xl items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-bold uppercase tracking-wider text-primary-deep">
+              {selectedClass.code} · {selectedCoach}
+              {selectedSeats.length > 0 ? ` · ${selectedSeats.length} seat${selectedSeats.length === 1 ? '' : 's'}` : ''}
+            </p>
+            <p className="text-xl font-black text-charcoal">
+              ₹{total.toLocaleString('en-IN')}
+            </p>
+          </div>
+          <Button
+            className="shrink-0 px-5 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={continueBooking}
+            disabled={selectedSeats.length === 0}
+          >
+            Continue
+          </Button>
+        </div>
       </div>
     </main>
   )

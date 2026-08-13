@@ -3,7 +3,10 @@ import Login from './Login'
 
 export default function LoginPage() {
   return (
-    <BackgroundWrapper contentClassName="max-w-[400px]">
+    <BackgroundWrapper
+      contentClassName="w-full max-w-[400px]"
+      paddingClassName="p-4 sm:p-6"
+    >
       <Login />
     </BackgroundWrapper>
   )
