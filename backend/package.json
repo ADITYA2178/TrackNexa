@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "seed:stations": "node src/scripts/seedStations.js"
+    "seed:stations": "node src/scripts/seedStations.js",
+    "seed:coaches": "node src/scripts/seedTrainCoachesSeats.js --reset",
+    "classify:trains": "psql -d tracknexa -f src/config/migrations/001_train_type_rules_and_master.sql && psql -d tracknexa -f src/config/migrations/002_run_train_type_classification.sql && psql -d tracknexa -f src/config/migrations/003_train_type_views.sql"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +17,9 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "pg": "^8.16.3"
+    "pdfkit": "^0.19.1",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
