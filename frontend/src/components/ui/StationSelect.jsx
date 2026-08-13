@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { resolveStationSuggestions } from '../../api/stations'
+import { StationListSkeleton } from './Skeleton'
 
 function formatStationName(name = '') {
   return name
@@ -133,7 +134,7 @@ export default function StationSelect({
           {!canSearch ? (
             <p className="px-4 py-3 text-sm text-slate">Type at least 2 characters to search</p>
           ) : isFetching ? (
-            <p className="px-4 py-3 text-sm text-slate">Searching stations...</p>
+            <StationListSkeleton count={5} />
           ) : isError ? (
             <p className="px-4 py-3 text-sm text-red-600">{error.message}</p>
           ) : stations.length === 0 ? (

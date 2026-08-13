@@ -6,6 +6,7 @@ import { formatJourneyDate, searchTrains } from '../../../api/trains'
 import Button from '../../../components/ui/Button'
 import DatePickerField from '../../../components/ui/DatePickerField'
 import StationSelect from '../../../components/ui/StationSelect'
+import { TrainResultsSkeleton } from '../../../components/ui/Skeleton'
 import TextInput from '../../../components/ui/TextInput'
 import { LineIcon } from './HomeIcons'
 import TrainResults from './TrainResults'
@@ -110,7 +111,10 @@ export default function JourneySearch() {
           {searchMutation.isPending ? 'Searching...' : 'Search Trains'}
         </Button>
 
-        {searchMutation.data ? <TrainResults result={searchMutation.data} /> : null}
+        {searchMutation.isPending ? <TrainResultsSkeleton count={3} /> : null}
+        {!searchMutation.isPending && searchMutation.data ? (
+          <TrainResults result={searchMutation.data} />
+        ) : null}
       </div>
     </section>
   )

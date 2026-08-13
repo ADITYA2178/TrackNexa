@@ -10,6 +10,7 @@ import {
   storePendingPayment,
 } from '../../api/payments'
 import Button from '../../components/ui/Button'
+import { PaymentOrderSkeleton } from '../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return String(name || '')
@@ -234,10 +235,7 @@ export default function PaymentOrderPage() {
 
             <div className="p-4 sm:p-5">
               {isCreating ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line bg-sky-mist px-4 py-12 text-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-deep border-t-transparent" />
-                  <p className="mt-4 text-sm font-semibold text-slate">Creating payment order…</p>
-                </div>
+                <PaymentOrderSkeleton />
               ) : createFailed ? (
                 <div className="rounded-2xl border-2 border-[#F3B4B4] bg-[#FFF5F5] px-4 py-8 text-center">
                   <p className="font-heading text-lg font-bold text-charcoal">Couldn’t create order</p>

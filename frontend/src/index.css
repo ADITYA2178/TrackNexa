@@ -187,4 +187,39 @@
     text-transform: uppercase;
     color: var(--color-primary-deep);
   }
+
+  .tn-skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: #d7e8ef;
+  }
+
+  .tn-skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.55) 45%,
+      rgba(46, 230, 214, 0.28) 55%,
+      transparent 100%
+    );
+    animation: tn-skeleton-shimmer 1.35s ease-in-out infinite;
+  }
+
+  @keyframes tn-skeleton-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tn-skeleton::after {
+      animation: none;
+      opacity: 0.35;
+      transform: none;
+    }
+  }
 }

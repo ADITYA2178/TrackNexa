@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import TrachNexaLogo from '../../assets/TrachNexaLogo'
 import { getBookingsByUser, getStoredAuthUser } from '../../api/bookings'
 import Button from '../../components/ui/Button'
+import { BookingCardSkeleton } from '../../components/ui/Skeleton'
 
 const STATUS_FILTERS = [
   { value: '', label: 'All' },
@@ -284,12 +285,7 @@ export default function MyBookingsPage() {
           </div>
         </section>
 
-        {isFetching && bookings.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-line bg-white px-4 py-16 text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-deep border-t-transparent" />
-            <p className="mt-4 text-sm font-semibold text-slate">Loading your bookings…</p>
-          </div>
-        ) : null}
+        {isFetching && bookings.length === 0 ? <BookingCardSkeleton count={4} /> : null}
 
         {isError ? (
           <div className="rounded-3xl border-2 border-[#F3B4B4] bg-[#FFF5F5] px-4 py-8 text-center">
@@ -338,7 +334,9 @@ export default function MyBookingsPage() {
         ) : null}
 
         {isFetching && bookings.length > 0 ? (
-          <p className="text-center text-xs font-semibold text-slate">Refreshing…</p>
+          <div className="pointer-events-none opacity-60">
+            <BookingCardSkeleton count={2} />
+          </div>
         ) : null}
       </div>
     </main>

@@ -11,6 +11,7 @@ import {
   getStoredAuthUser,
 } from '../../api/bookings'
 import Button from '../../components/ui/Button'
+import { BookingDetailsSkeleton } from '../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return String(name || '')
@@ -291,12 +292,7 @@ export default function CancelBookingPage() {
       </section>
 
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-6 pb-28 sm:px-6 sm:py-8">
-        {isFetching && !booking ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-line bg-white px-4 py-16 text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-deep border-t-transparent" />
-            <p className="mt-4 text-sm font-semibold text-slate">Loading booking…</p>
-          </div>
-        ) : null}
+        {isFetching && !booking ? <BookingDetailsSkeleton /> : null}
 
         {isError ? (
           <div className="rounded-3xl border-2 border-[#F3B4B4] bg-[#FFF5F5] px-4 py-8 text-center">

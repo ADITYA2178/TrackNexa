@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import TrachNexaLogo from '../../assets/TrachNexaLogo'
 import { getSeatAvailability, TRAVEL_CLASSES } from '../../api/availability'
 import Button from '../../components/ui/Button'
+import { CoachGridSkeleton, Skeleton } from '../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
@@ -60,9 +61,10 @@ function ClassCard({ travelClass, active, availability, loading, onSelect }) {
 
       <div className="mt-3 flex flex-col gap-0.5">
         {loading ? (
-          <span className={`text-xs font-semibold ${active ? 'text-white/70' : 'text-slate'}`}>
-            Checking…
-          </span>
+          <div className="flex flex-col gap-2">
+            <Skeleton className={`h-3.5 w-20 ${active ? 'bg-white/25' : ''}`} rounded="md" />
+            <Skeleton className={`h-2.5 w-28 ${active ? 'bg-white/15' : ''}`} rounded="md" />
+          </div>
         ) : notOffered ? (
           <span className={`text-xs font-semibold ${active ? 'text-white/60' : 'text-slate'}`}>
             Not on this train
@@ -444,12 +446,7 @@ export default function SeatSelectionPage() {
 
             <div className="mt-5">
               {isFetching ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-line bg-sky-mist px-4 py-12 text-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-deep border-t-transparent" />
-                  <p className="mt-4 text-sm font-semibold text-slate">
-                    Fetching {selectedClass.code} availability…
-                  </p>
-                </div>
+                <CoachGridSkeleton count={4} />
               ) : showNotOffered ? (
                 <div className="rounded-2xl border-2 border-line bg-sky-mist px-4 py-10 text-center">
                   <p className="font-heading text-lg font-bold text-charcoal">

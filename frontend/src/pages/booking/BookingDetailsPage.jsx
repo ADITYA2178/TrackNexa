@@ -6,6 +6,7 @@ import TrachNexaLogo from '../../assets/TrachNexaLogo'
 import { getBookingByPnr } from '../../api/bookings'
 import { getStoredConfirmedBooking } from '../../api/payments'
 import Button from '../../components/ui/Button'
+import { BookingDetailsSkeleton } from '../../components/ui/Skeleton'
 
 function formatStationName(name = '') {
   return String(name || '')
@@ -176,12 +177,7 @@ export default function BookingDetailsPage() {
           </div>
         ) : null}
 
-        {lookupPnr && isFetching && !booking ? (
-          <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-line bg-white px-4 py-16 text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-deep border-t-transparent" />
-            <p className="mt-4 text-sm font-semibold text-slate">Fetching booking…</p>
-          </div>
-        ) : null}
+        {lookupPnr && isFetching && !booking ? <BookingDetailsSkeleton /> : null}
 
         {isError ? (
           <div className="rounded-3xl border-2 border-[#F3B4B4] bg-[#FFF5F5] px-4 py-8 text-center sm:px-6">
