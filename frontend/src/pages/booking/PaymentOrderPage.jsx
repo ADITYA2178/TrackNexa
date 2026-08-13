@@ -326,7 +326,11 @@ export default function PaymentOrderPage() {
               <Button
                 className="mt-2 w-full py-3.5 text-base disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={!paymentOrder || countdown?.expired}
-                onClick={() => toast('Payment verify comes next — API #4')}
+                onClick={() =>
+                  navigate('/booking/verify', {
+                    state: { hold, payment: paymentOrder },
+                  })
+                }
               >
                 Proceed to pay
               </Button>
@@ -357,7 +361,11 @@ export default function PaymentOrderPage() {
           <Button
             className="shrink-0 px-5 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!paymentOrder || countdown?.expired}
-            onClick={() => toast('Payment verify comes next — API #4')}
+            onClick={() =>
+              navigate('/booking/verify', {
+                state: { hold, payment: paymentOrder },
+              })
+            }
           >
             Proceed to pay
           </Button>
