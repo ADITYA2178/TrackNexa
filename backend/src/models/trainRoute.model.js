@@ -1,5 +1,4 @@
-const { query } = require('../config/db')
-
+import { query } from "../config/db.js"
 async function findTrainsBetween({ from, to }) {
   const result = await query(
     `
@@ -104,9 +103,4 @@ async function trainExists(trainNo) {
   return result.rowCount > 0
 }
 
-module.exports = {
-  findTrainsBetween,
-  findStationOnTrain,
-  findStopsBetween,
-  trainExists,
-}
+export { findTrainsBetween, findStationOnTrain, findStopsBetween, trainExists }

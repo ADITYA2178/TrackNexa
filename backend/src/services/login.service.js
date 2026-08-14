@@ -1,6 +1,5 @@
-const signUpModel = require('../models/signUp.model')
-const { verifyPassword } = require('../utils/password')
-
+import * as signUpModel from "../models/signUp.model.js"
+import { verifyPassword } from "../utils/password.js"
 function toPublicUser(user) {
   return {
     id: user.id,
@@ -49,6 +48,4 @@ async function loginUser({ email, mobileNumber, phone, password }) {
   return toPublicUser(user)
 }
 
-module.exports = {
-  loginUser,
-}
+export { loginUser }

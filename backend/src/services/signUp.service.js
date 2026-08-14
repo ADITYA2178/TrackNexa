@@ -1,9 +1,8 @@
-const signUpModel = require('../models/signUp.model')
-const {
+import * as signUpModel from "../models/signUp.model.js"
+import {
   encryptPassword,
   validatePasswordStrength,
-} = require('../utils/password')
-
+} from "../utils/password.js"
 async function registerUser({
   fullName,
   email,
@@ -50,6 +49,4 @@ async function registerUser({
   return user
 }
 
-module.exports = {
-  registerUser,
-}
+export { registerUser }

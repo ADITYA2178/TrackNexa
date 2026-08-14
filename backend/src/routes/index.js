@@ -1,13 +1,12 @@
-const { Router } = require('express')
-const signUpController = require('../controllers/signUp.controller')
-const loginController = require('../controllers/login.controller')
-const stationController = require('../controllers/station.controller')
-const trainRouteController = require('../controllers/trainRoute.controller')
-const seatAvailabilityController = require('../controllers/seatAvailability.controller')
-const bookingController = require('../controllers/booking.controller')
-const paymentController = require('../controllers/payment.controller')
-const ticketController = require('../controllers/ticket.controller')
-
+import { Router } from "express"
+import * as signUpController from "../controllers/signUp.controller.js"
+import * as loginController from "../controllers/login.controller.js"
+import * as stationController from "../controllers/station.controller.js"
+import * as trainRouteController from "../controllers/trainRoute.controller.js"
+import * as seatAvailabilityController from "../controllers/seatAvailability.controller.js"
+import * as bookingController from "../controllers/booking.controller.js"
+import * as paymentController from "../controllers/payment.controller.js"
+import * as ticketController from "../controllers/ticket.controller.js"
 const router = Router()
 
 router.get('/', (req, res) => {
@@ -34,4 +33,4 @@ router.post('/api/payments/create-order', paymentController.createOrder)
 router.post('/api/payments/verify', paymentController.verify)
 router.post('/api/tickets/verify', ticketController.verify)
 
-module.exports = router
+export default router

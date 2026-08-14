@@ -1,5 +1,4 @@
-const { query, pool } = require('../config/db')
-
+import { query, pool } from "../config/db.js"
 async function findStationSeq(trainNo, station) {
   const result = await query(
     `
@@ -116,10 +115,4 @@ async function getCoachAvailability(client, {
   return result.rows
 }
 
-module.exports = {
-  pool,
-  findStationSeq,
-  trainExists,
-  getClassCoaches,
-  getCoachAvailability,
-}
+export { pool, findStationSeq, trainExists, getClassCoaches, getCoachAvailability }

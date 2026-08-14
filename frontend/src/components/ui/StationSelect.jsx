@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { resolveStationSuggestions } from '../../api/stations'
+import { formatStationName } from '../../utils/format'
 import { StationListSkeleton } from './Skeleton'
-
-function formatStationName(name = '') {
-  return name
-    .toLowerCase()
-    .replace(/\b\w/g, (letter) => letter.toUpperCase())
-}
 
 function getStationLabel(station) {
   if (!station) return ''

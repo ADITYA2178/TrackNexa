@@ -1,5 +1,4 @@
-const { query } = require('../config/db')
-
+import { query } from "../config/db.js"
 function normalizeSearch(value) {
   return String(value || '')
     .trim()
@@ -138,8 +137,4 @@ async function countAll({ search, city } = {}) {
   return result.rows[0].count
 }
 
-module.exports = {
-  findAll,
-  findByCode,
-  countAll,
-}
+export { findAll, findByCode, countAll }

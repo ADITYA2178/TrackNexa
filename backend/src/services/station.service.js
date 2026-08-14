@@ -1,5 +1,4 @@
-const stationModel = require('../models/station.model')
-
+import * as stationModel from "../models/station.model.js"
 async function getStations(query = {}) {
   const { search, city, limit, offset } = query
 
@@ -28,7 +27,4 @@ async function getStationByCode(stationCode) {
   return station
 }
 
-module.exports = {
-  getStations,
-  getStationByCode,
-}
+export { getStations, getStationByCode }

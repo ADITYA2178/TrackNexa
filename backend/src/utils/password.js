@@ -1,11 +1,10 @@
-const {
+import {
   createCipheriv,
   createDecipheriv,
   randomBytes,
   timingSafeEqual,
-} = require('crypto')
-const { aesKey } = require('../config')
-
+} from "crypto"
+import { aesKey } from "../config/index.js"
 const ALGORITHM = 'aes-256-gcm'
 const IV_LENGTH = 12
 
@@ -116,9 +115,4 @@ function validatePasswordStrength(password) {
   }
 }
 
-module.exports = {
-  encryptPassword,
-  decryptPassword,
-  verifyPassword,
-  validatePasswordStrength,
-}
+export { encryptPassword, decryptPassword, verifyPassword, validatePasswordStrength }

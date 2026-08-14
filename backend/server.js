@@ -1,9 +1,7 @@
-require('dotenv').config()
-
-const app = require('./src/app')
-const { port } = require('./src/config')
-const { connectDB } = require('./src/config/db')
-
+import 'dotenv/config'
+import app from "./src/app.js"
+import { port } from "./src/config/index.js"
+import { connectDB } from "./src/config/db.js"
 async function start() {
   try {
     await connectDB()

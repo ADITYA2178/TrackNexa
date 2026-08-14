@@ -1,5 +1,4 @@
-const { query } = require('../config/db')
-
+import { query } from "../config/db.js"
 async function createSignUp({ fullName, email, mobileNumber, passwordHash }) {
   const result = await query(
     `INSERT INTO sign_up (full_name, email, mobile_number, password)
@@ -44,9 +43,4 @@ async function findByMobileWithPassword(mobileNumber) {
   return result.rows[0] || null
 }
 
-module.exports = {
-  createSignUp,
-  findByEmail,
-  findByEmailWithPassword,
-  findByMobileWithPassword,
-}
+export { createSignUp, findByEmail, findByEmailWithPassword, findByMobileWithPassword }

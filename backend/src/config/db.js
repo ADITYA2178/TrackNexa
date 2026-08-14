@@ -1,5 +1,5 @@
-const { Pool } = require('pg')
-const { db } = require('./index')
+import { Pool } from 'pg'
+import { db } from './index.js'
 
 const pool = new Pool({
   host: db.host,
@@ -25,8 +25,6 @@ async function connectDB() {
   }
 }
 
-module.exports = {
-  pool,
-  connectDB,
-  query: (text, params) => pool.query(text, params),
-}
+const query = (text, params) => pool.query(text, params)
+
+export { pool, connectDB, query }
