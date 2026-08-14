@@ -1,37 +1,21 @@
-const stationService = require('../services/station.service')
+import * as stationService from '../services/station.service.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
 
-async function listStations(req, res) {
-  try {
-    const { search, city, limit, offset } = req.query
-    const data = await stationService.getStations({
-      search,
-      city,
-      limit,
-      offset,
-    })
+const listStations = asyncHandler(async (req, res) => {
+  const { search, city, limit, offset } = req.query
+  const data = await stationService.getStations({
+    search,
+    city,
+    limit,
+    offset,
+  })
 
-    return res.status(200).json(data)
-  } catch (err) {
-    const status = err.status || 500
-    return res.status(status).json({
-      message: err.message || 'Something went wrong',
-    })
-  }
-}
+  return res.status(200).json(data)
+})
 
-async function getStation(req, res) {
-  try {
-    const station = await stationService.getStationByCode(req.params.code)
-    return res.status(200).json({ station })
-  } catch (err) {
-    const status = err.status || 500
-    return res.status(status).json({
-      message: err.message || 'Something went wrong',
-    })
-  }
-}
+const getStation = asyncHandler(async (req, res) => {
+  const station = await stationService.getStationByCode(req.params.code)
+  return res.status(200).json({ station })
+})
 
-module.exports = {
-  listStations,
-  getStation,
-}
+export { listStations, getStation }

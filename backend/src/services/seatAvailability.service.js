@@ -1,5 +1,4 @@
-const seatAvailabilityModel = require('../models/seatAvailability.model')
-
+import * as seatAvailabilityModel from "../models/seatAvailability.model.js"
 const ALLOWED_CLASSES = new Set([
   '1A',
   '2A',
@@ -188,6 +187,4 @@ async function getSeatAvailability({
   }
 }
 
-module.exports = {
-  getSeatAvailability,
-}
+export { getSeatAvailability }

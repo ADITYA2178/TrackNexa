@@ -3,57 +3,16 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import TrachNexaLogo from '../../assets/TrachNexaLogo'
-import { buildApiUrl } from '../../config/api'
+import { signUp } from '../../api/auth'
 import {
   ChevronDownIcon,
-  EyeIcon,
-  EyeOffIcon,
   IndiaFlagIcon,
   LockIcon,
   MailIcon,
   PhoneIcon,
   UserIcon,
 } from './components/icons'
-
-function Field({
-  id,
-  label,
-  icon,
-  type = 'text',
-  placeholder,
-  value,
-  onChange,
-  rightSlot,
-  leftAddon,
-}) {
-  return (
-    <div>
-      <label htmlFor={id} className="tn-label">
-        {label}
-      </label>
-      <div className="flex items-center gap-2 border-b-2 border-line transition-colors focus-within:border-primary-deep">
-        {leftAddon}
-        <span className="shrink-0 text-primary-deep">{icon}</span>
-        <input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          className="w-full border-none bg-transparent py-2 text-[0.95rem] text-charcoal outline-none placeholder:text-slate"
-          autoComplete={
-            type === 'password'
-              ? 'new-password'
-              : type === 'email'
-                ? 'email'
-                : 'off'
-          }
-        />
-        {rightSlot}
-      </div>
-    </div>
-  )
-}
+import SignUpField from './SignUpField'
 
 export default function SignUp() {
   const navigate = useNavigate()
@@ -65,32 +24,14 @@ export default function SignUp() {
     confirmPassword: '',
     agree: true,
   })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
+
   const signUpMutation = useMutation({
-    mutationFn: async (payload) => {
-      const response = await fetch(buildApiUrl('/api/sign-up'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      })
-      const data = await response.json().catch(() => null)
-
-      if (!response.ok) {
-        throw new Error(data?.message ?? 'Unable to create account')
-      }
-
-      return data
-    },
+    mutationFn: signUp,
     onSuccess: (data) => {
       toast.success(data?.message ?? 'Account created successfully')
       navigate('/login')
     },
-    onError: (error) => {
-      toast.error(error.message)
-    },
+    onError: (error) => toast.error(error.message),
   })
 
   const update = (key) => (e) => {
@@ -123,7 +64,7 @@ export default function SignUp() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <Field
+          <SignUpField
             id="fullName"
             label="Full Name"
             icon={<UserIcon />}
@@ -131,8 +72,7 @@ export default function SignUp() {
             value={form.fullName}
             onChange={update('fullName')}
           />
-
-          <Field
+          <SignUpField
             id="email"
             label="Email Address"
             icon={<MailIcon />}
@@ -141,8 +81,7 @@ export default function SignUp() {
             value={form.email}
             onChange={update('email')}
           />
-
-          <Field
+          <SignUpField
             id="mobile"
             label="Mobile Number"
             icon={<PhoneIcon />}
@@ -162,45 +101,23 @@ export default function SignUp() {
               </button>
             }
           />
-
-          <Field
+          <SignUpField
             id="password"
             label="Create Password"
             icon={<LockIcon />}
-            type={showPassword ? 'text' : 'password'}
+            revealable
             placeholder="Create Password"
             value={form.password}
             onChange={update('password')}
-            rightSlot={
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="shrink-0 text-primary-deep"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeIcon /> : <EyeOffIcon />}
-              </button>
-            }
           />
-
-          <Field
+          <SignUpField
             id="confirmPassword"
             label="Confirm Password"
             icon={<LockIcon />}
-            type={showConfirm ? 'text' : 'password'}
+            revealable
             placeholder="Confirm Password"
             value={form.confirmPassword}
             onChange={update('confirmPassword')}
-            rightSlot={
-              <button
-                type="button"
-                onClick={() => setShowConfirm((v) => !v)}
-                className="shrink-0 text-primary-deep"
-                aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
-              >
-                {showConfirm ? <EyeIcon /> : <EyeOffIcon />}
-              </button>
-            }
           />
 
           <label className="flex items-start gap-2.5 pt-1 text-sm text-slate">

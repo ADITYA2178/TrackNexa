@@ -1,28 +1,20 @@
-const loginService = require('../services/login.service')
+import * as loginService from '../services/login.service.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
 
-async function login(req, res) {
-  try {
-    const { email, mobileNumber, phone, password } = req.body
+const login = asyncHandler(async (req, res) => {
+  const { email, mobileNumber, phone, password } = req.body
 
-    const user = await loginService.loginUser({
-      email,
-      mobileNumber,
-      phone,
-      password,
-    })
+  const user = await loginService.loginUser({
+    email,
+    mobileNumber,
+    phone,
+    password,
+  })
 
-    return res.status(200).json({
-      message: 'Login successful',
-      user,
-    })
-  } catch (err) {
-    const status = err.status || 500
-    return res.status(status).json({
-      message: err.message || 'Something went wrong',
-    })
-  }
-}
+  return res.status(200).json({
+    message: 'Login successful',
+    user,
+  })
+})
 
-module.exports = {
-  login,
-}
+export { login }

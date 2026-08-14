@@ -1,36 +1,27 @@
-const signUpService = require('../services/signUp.service')
+import * as signUpService from '../services/signUp.service.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
 
-async function signUp(req, res) {
-  try {
-    const {
-      fullName,
-      email,
-      mobileNumber,
-      password,
-      confirmPassword,
-    } = req.body
+const signUp = asyncHandler(async (req, res) => {
+  const {
+    fullName,
+    email,
+    mobileNumber,
+    password,
+    confirmPassword,
+  } = req.body
 
-    const user = await signUpService.registerUser({
-      fullName,
-      email,
-      mobileNumber,
-      password,
-      confirmPassword,
-    })
+  const user = await signUpService.registerUser({
+    fullName,
+    email,
+    mobileNumber,
+    password,
+    confirmPassword,
+  })
 
-    return res.status(201).json({
-      message: 'Account created successfully',
-      user,
-    })
-  } catch (err) {
-    const status = err.status || 500
-    return res.status(status).json({
-      message: err.message || 'Something went wrong',
-      ...(err.errors ? { errors: err.errors } : {}),
-    })
-  }
-}
+  return res.status(201).json({
+    message: 'Account created successfully',
+    user,
+  })
+})
 
-module.exports = {
-  signUp,
-}
+export { signUp }

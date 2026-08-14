@@ -30,4 +30,4 @@ function sanitizeBody(body) {
   return clone
 }
 
-module.exports = requestLogger
+export default requestLogger

@@ -1,152 +1,26 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import BookingDetailsPage from './pages/booking/BookingDetailsPage'
-import CancelBookingPage from './pages/booking/CancelBookingPage'
-import ConfirmHoldPage from './pages/booking/ConfirmHoldPage'
-import MyBookingsPage from './pages/booking/MyBookingsPage'
-import PassengerHoldPage from './pages/booking/PassengerHoldPage'
-import PaymentOrderPage from './pages/booking/PaymentOrderPage'
-import PaymentVerifyPage from './pages/booking/PaymentVerifyPage'
-import SeatSelectionPage from './pages/booking/SeatSelectionPage'
-import TicketPage from './pages/booking/TicketPage'
-import TicketVerifyPage from './pages/booking/TicketVerifyPage'
-import HomePage from './pages/home/HomePage'
-import LoginPage from './pages/login/LoginPage'
-import SignUpPage from './pages/signup/SignUpPage'
+import { BrowserRouter } from 'react-router-dom'
+import AppRoutes from './routes/AppRoutes'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 30_000,
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
+})
 
-function ProtectedRoute({ children }) {
-  const authToken = localStorage.getItem('authToken')
-
-  if (!authToken) {
-    return <Navigate to="/login" replace />
-  }
-
-  return children
-}
-
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route
-            path="/login"
-            element={<LoginPage />}
-          />
-          <Route
-            path="/home"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/trains/:trainNo/seats"
-            element={
-              <ProtectedRoute>
-                <SeatSelectionPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/hold"
-            element={
-              <ProtectedRoute>
-                <PassengerHoldPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/confirm"
-            element={
-              <ProtectedRoute>
-                <ConfirmHoldPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/payment"
-            element={
-              <ProtectedRoute>
-                <PaymentOrderPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/verify"
-            element={
-              <ProtectedRoute>
-                <PaymentVerifyPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/ticket/:pnr"
-            element={
-              <ProtectedRoute>
-                <TicketPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/ticket"
-            element={
-              <ProtectedRoute>
-                <TicketPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/pnr/:pnr"
-            element={
-              <ProtectedRoute>
-                <BookingDetailsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/pnr"
-            element={
-              <ProtectedRoute>
-                <BookingDetailsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/cancel/:pnr"
-            element={
-              <ProtectedRoute>
-                <CancelBookingPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/my"
-            element={
-              <ProtectedRoute>
-                <MyBookingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/booking/verify-ticket"
-            element={
-              <ProtectedRoute>
-                <TicketVerifyPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/signup"
-            element={<SignUpPage />}
-          />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+        <AppRoutes />
         <Toaster
           position="top-center"
           containerStyle={{
@@ -168,5 +42,3 @@ function App() {
     </QueryClientProvider>
   )
 }
-
-export default App

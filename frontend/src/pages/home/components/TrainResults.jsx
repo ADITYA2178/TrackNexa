@@ -1,20 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { formatStationName, formatTime } from '../../../utils/format'
 import { LineIcon } from './HomeIcons'
 import TrainRouteDialog from './TrainRouteDialog'
-
-function formatStationName(name = '') {
-  return name.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase())
-}
-
-function formatTime(time = '') {
-  const [hours, minutes] = time.split(':').map(Number)
-  if (Number.isNaN(hours) || Number.isNaN(minutes)) return time
-
-  const period = hours >= 12 ? 'PM' : 'AM'
-  const hour12 = hours % 12 || 12
-  return `${hour12}:${String(minutes).padStart(2, '0')} ${period}`
-}
 
 export default function TrainResults({ result }) {
   const navigate = useNavigate()
